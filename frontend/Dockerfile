@@ -1,16 +1,16 @@
-FROM node:22-slim
+FROM node:23-slim
 
 WORKDIR /app
 
-# Instalar dependencias primero (para aprovechar la caché de Docker)
 COPY package*.json ./
+
 RUN npm install
 
-# Copiar el resto del código
 COPY . .
 
-# Puerto que expone Astro por defecto
-EXPOSE 3000
+# Asegurarse de que el host esté configurado para permitir conexiones externas
+ENV HOST=0.0.0.0
 
-# Comando para desarrollo
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+EXPOSE 4321
+
+CMD ["npm", "run", "dev"]

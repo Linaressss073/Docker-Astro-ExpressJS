@@ -1,42 +1,29 @@
 services:
   frontend:
+    container_name: astro-app
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: astro-frontend
     ports:
-      - "3000:3000"
+      - "4321:4321"  # Astro usa el puerto 4321 por defecto
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=development
-      - BACKEND_URL=http://backend:3001
+    depends_on:
+      - backend
     networks:
       - app-network
 
   backend:
+    container_name: nestjs-api
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: nestjs-backend
     ports:
-      - "3001:3001"
+      - "3000:3000"  # NestJS usa el puerto 3000
     volumes:
       - ./backend:/app
       - /app/node_modules
-    depends_on:
-      - postgres
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=development
-      - PORT=3001
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_USER=${POSTGRES_USER}
-      - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
-      - DATABASE_NAME=${POSTGRES_DB}
     networks:
       - app-network
 
