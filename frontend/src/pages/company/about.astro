@@ -1,0 +1,59 @@
+---
+import { TextSection } from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+import HeroSection from '../../components/sections/heros/HeroSection.astro';
+
+const seo = {
+	title: 'About Us | Hotel Paraíso',
+	description: 'Conoce más sobre Hotel Paraíso, nuestro compromiso y nuestra historia.',
+};
+---
+
+<Layout {seo}>
+	<HeroSection>
+		<div slot="text-container">
+			<h1>Sobre Nosotros</h1>
+			<p>
+				En Hotel Paraíso, te damos la bienvenida a un espacio diseñado para tu descanso,
+				conexión con la naturaleza y experiencias inolvidables. Nos enorgullece ofrecer
+				un servicio cálido y personalizado para cada uno de nuestros visitantes.
+			</p>
+		</div>
+    <picture slot="image-container">
+      <img
+        src="/assets/images/home/classic-hero.jpg"
+        alt="Vista del Hotel Paraíso"
+        id="home-hero-image"
+      />
+    </picture>
+	</HeroSection>
+
+  <TextSection narrow>
+    <p>
+      Fundado en 2025, Hotel Paraíso nace del sueño de crear un refugio natural donde
+      la tranquilidad, el confort y la atención al detalle se combinan para brindar una
+      experiencia inolvidable. Ubicado en un entorno privilegiado, entre montañas y
+      ríos cristalinos, nuestro hotel es el destino ideal para quienes buscan escapar del ruido
+      y reconectar con lo esencial.
+    </p>
+
+    <p>
+      Nuestro equipo está comprometido con brindar un servicio de excelencia, cuidando cada
+      aspecto de tu estadía: desde habitaciones acogedoras, gastronomía local de primera calidad,
+      hasta actividades diseñadas para todos los gustos y edades.
+    </p>
+
+    <p>
+      En Hotel Paraíso también nos preocupamos por el impacto ambiental. Implementamos
+      prácticas sostenibles como el uso eficiente de recursos, energías renovables, y apoyo a
+      comunidades locales. Creemos que el turismo responsable es el camino para preservar
+      nuestro entorno.
+    </p>
+
+    <p>
+      Ya sea que nos visites por vacaciones, eventos especiales o una escapada romántica, en
+      Hotel Paraíso encontrarás mucho más que un lugar donde dormir: vivirás momentos
+      que atesorarás por siempre. ¡Te esperamos!
+    </p>
+  </TextSection>
+</Layout>

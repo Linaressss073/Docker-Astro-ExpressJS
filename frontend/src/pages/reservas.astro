@@ -1,0 +1,57 @@
+---
+import { TextSection } from '@components/odyssey-theme';
+import Layout from '../layouts/Page.astro';
+import HeroSection from '../components/sections/heros/HeroSection.astro';
+
+const seo = {
+  title: 'Reservar | Hotel Paraíso',
+  description: 'Haz tu reserva para hospedaje, pasadías o eventos en Hotel Paraíso.',
+};
+---
+
+<Layout {seo}>
+  <HeroSection>
+    <div slot="text-container">
+      <h1>Haz tu Reserva</h1>
+      <p>
+        Elige tu tipo de experiencia: hospedaje completo, pasadía o eventos especiales.
+        Nuestro equipo te acompañará en todo el proceso.
+      </p>
+    </div>
+    <picture slot="image-container">
+      <img
+        src="/assets/images/reservas/booking.jpg"
+        alt="Recepción del Hotel Paraíso"
+        id="reserva-hero-image"
+      />
+    </picture>
+  </HeroSection>
+
+  <TextSection narrow>
+    <h2>Opciones de Reserva</h2>
+    <ul class="list-disc list-inside mb-6">
+      <li><strong>Hospedaje</strong>: Cabañas equipadas, desayuno incluido.</li>
+      <li><strong>Pasadías</strong>: Acceso completo por un día con o sin almuerzo.</li>
+      <li><strong>Eventos</strong>: Reserva de espacios para bodas, cumpleaños o corporativos.</li>
+    </ul>
+
+    <h2>¿Cómo Reservar?</h2>
+    <ol class="list-decimal list-inside mb-6">
+      <li>Completa el formulario o contáctanos por WhatsApp.</li>
+      <li>Confirma disponibilidad y recibe instrucciones de pago.</li>
+      <li>¡Listo! Te esperamos con los brazos abiertos.</li>
+    </ol>
+
+    <a href="/formulario-reserva" class="inline-block bg-blue-600 text-white px-6 py-2 mt-2 rounded-xl hover:bg-blue-700 transition">
+      Iniciar Reserva
+    </a>
+
+    <p class="mt-4">
+      ¿Prefieres asistencia personalizada? <a href="https://wa.me/57XXXXXXXXXX" target="_blank" class="text-blue-500 underline">Contáctanos por WhatsApp</a>
+    </p>
+
+    <picture>
+      <img src="/assets/images/reservas/cabana.jpg" alt="Cabaña reservada" class="rounded-xl shadow-lg mt-6" />
+    </picture>
+  </TextSection>
+</Layout>

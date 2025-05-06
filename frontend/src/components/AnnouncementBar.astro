@@ -1,0 +1,93 @@
+---
+export interface Props {
+    showAnnouncement?: boolean;
+    text?: string;
+    linkText?: string;
+    linkUrl?: string;
+    backgroundColor?: string;
+    textColor?: string;
+}
+
+// const {
+//     showAnnouncement = true,
+//     text = "Oferta Especial: 20% de descuento en reservas anticipadas",
+//     linkText = "Reservar Ahora",
+//     linkUrl = "/booking",
+//     backgroundColor = "var(--primary-color)",
+//     textColor = "#fff"
+// } = Astro.props;
+
+// No mostrar si showAnnouncement es false
+//if (!showAnnouncement) {
+    //return null;
+//}
+---
+
+
+<script>
+    // Script para cerrar el anuncio
+    document.addEventListener('DOMContentLoaded', function() {
+        const closeBtn = document.querySelector('.announcement-close');
+        const announcementBar = document.querySelector('.announcement-bar');
+        
+        if (closeBtn && announcementBar) {
+            closeBtn.addEventListener('click', function() {
+                (announcementBar as HTMLElement).style.display = 'none';
+                
+                // Opcionalmente, guardar en localStorage para mantener cerrado
+                localStorage.setItem('announcementClosed', 'true');
+                
+                // Disparar un evento para que otros componentes puedan ajustarse
+                window.dispatchEvent(new Event('announcementClosed'));
+            });
+            
+            // Verificar si el usuario ya cerró el anuncio previamente
+            if (localStorage.getItem('announcementClosed') === 'true') {
+                (announcementBar as HTMLElement).style.display = 'none';
+            }
+        }
+    });
+</script>
+
+<style>
+    
+    .announcement-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .announcement-content p {
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+    
+    .announcement-link {
+        color: inherit;
+        text-decoration: underline;
+        font-weight: 600;
+        margin-left: 5px;
+        transition: var(--transition);
+    }
+    
+    .announcement-link:hover {
+        text-decoration: none;
+        opacity: 0.9;
+        color: inherit;
+    }
+    
+    .announcement-close {
+        background: transparent;
+        border: none;
+        color: inherit;
+        padding: 0;
+        font-size: 14px;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: var(--transition);
+    }
+    
+    .announcement-close:hover {
+        opacity: 1;
+    }
+</style>

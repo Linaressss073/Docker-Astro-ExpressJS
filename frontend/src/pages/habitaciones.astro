@@ -1,0 +1,389 @@
+---
+// Importaciones necesarias
+import HotelLayout from '../layouts/HotelLayout.astro';
+import AnnouncementBar from '../components/AnnouncementBar.astro';
+
+
+import Logo from '../components/Logo.astro';
+
+// Datos de ejemplo para las habitaciones (en un proyecto real probablemente vendrían de una API o CMS)
+const rooms = [
+  {
+    id: 1,
+    name: "Deluxe Room",
+    description: "Una habitación elegante con diseño moderno, ideal para parejas que buscan confort. Incluye una cama King, baño privado con acabados de lujo, WiFi de alta velocidad y desayuno incluido.",
+    price: 120,
+    oldPrice: 150,
+    capacity: 2,
+    bed: "King Beds",
+    services: ["Breakfast", "Bathroom", "WiFi", "TV"],
+    image: "/images/rooms/room1.jpg",
+    stars: 5
+  },
+  {
+    id: 2,
+    name: "Double Room",
+    description: "Perfecta para amigos o parejas, esta habitación ofrece dos camas dobles, un ambiente acogedor y servicios esenciales como TV, WiFi gratuito y baño completo.",
+    price: 90,
+    oldPrice: 110,
+    capacity: 2,
+    bed: "Double Beds",
+    services: ["Breakfast", "Bathroom", "WiFi", "TV"],
+    image: "/images/rooms/room2.jpg",
+    stars: 4
+  },
+  {
+    id: 3,
+    name: "Suite Room",
+    description: "Nuestra suite combina lujo y amplitud. Disfruta de camas King y Queen, minibar, baño privado con jacuzzi, sala de estar separada y atención personalizada las 24 horas.",
+    price: 200,
+    oldPrice: 250,
+    capacity: 4,
+    bed: "King & Queen Beds",
+    services: ["Breakfast", "Private Bathroom", "WiFi", "TV", "Mini Bar"],
+    image: "/images/rooms/room3.jpg",
+    stars: 5
+  },
+  {
+    id: 4,
+    name: "Family Room",
+    description: "Espacio ideal para familias numerosas, equipada con varias camas, aire acondicionado, área de descanso, WiFi, y televisión por cable. Comodidad y funcionalidad para todos.",
+    price: 150,
+    oldPrice: 180,
+    capacity: 6,
+    bed: "Multiple Beds",
+    services: ["Breakfast", "Bathroom", "WiFi", "TV", "Air Conditioning"],
+    image: "/images/rooms/room4.jpg",
+    stars: 4
+  }
+];
+
+// Props del componente
+const { title = "Nuestras Habitaciones" } = Astro.props;
+
+// SEO props
+
+---
+
+<HotelLayout>
+    <div class="full-page-split__logo">
+        <a href="/">
+          <Logo />
+        </a>
+      </div>
+    <AnnouncementBar slot="announcement-bar" />
+    
+    <!-- Sección principal de lista de habitaciones -->
+    <section class="room-list">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar de búsqueda -->
+                <div class="col-lg-3">
+                    <div class="sidebar">
+                        <div class="sidebar-item mb-4">
+                            <h4>Buscar Habitación</h4>
+                            <div class="sidebar-content">
+                                <form>
+                                    <div class="form-group mb-3">
+                                        <label>Check-in</label>
+                                        <input type="date" class="form-control" />
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label>Check-out</label>
+                                        <input type="date" class="form-control" />
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label>Adultos</label>
+                                        <select class="form-select">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label>Niños</label>
+                                        <select class="form-select">
+                                            <option value="0">0</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label>Categoría</label>
+                                        <select class="form-select">
+                                            <option value="">Todas las categorías</option>
+                                            <option value="deluxe">Deluxe</option>
+                                            <option value="double">Double</option>
+                                            <option value="suite">Suite</option>
+                                            <option value="family">Family</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Buscar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-item mb-4">
+                            <h4>Rango de Precio</h4>
+                            <div class="sidebar-content">
+                                <div class="range-slider">
+                                    <input type="range" min="0" max="500" value="100" class="slider" id="priceRange">
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <span>$0</span>
+                                        <span id="priceValue">$100</span>
+                                        <span>$500</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-item">
+                            <h4>Servicios Populares</h4>
+                            <div class="sidebar-content">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="wifi">
+                                    <label class="form-check-label" for="wifi">WiFi</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="breakfast">
+                                    <label class="form-check-label" for="breakfast">Desayuno</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="pool">
+                                    <label class="form-check-label" for="pool">Piscina</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="ac">
+                                    <label class="form-check-label" for="ac">Aire Acondicionado</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="gym">
+                                    <label class="form-check-label" for="gym">Gimnasio</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de habitaciones -->
+                <div class="col-lg-9">
+                    <!-- Filtros superiores -->
+                    <div class="list-results d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4>Mostrando 1-{rooms.length} de {rooms.length} resultados</h4>
+                        </div>
+                        <div class="list-sort">
+                            <select class="form-select">
+                                <option value="popular">Popularidad</option>
+                                <option value="price-low">Precio: De menor a mayor</option>
+                                <option value="price-high">Precio: De mayor a menor</option>
+                                <option value="rating">Calificación</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Tarjetas de habitaciones -->
+                    {rooms.map((room) => (
+                        <div class="room-item mb-4">
+                            <div class="row g-0 border rounded overflow-hidden shadow-sm">
+                                <div class="col-md-4">
+                                    <img src={room.image} alt={room.name} class="img-fluid h-100 object-fit-cover w-100" />
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h3 class="card-title mb-0">{room.name}</h3>
+                                            <div class="price-box">
+                                                <span class="price">${room.price}</span>
+                                                <span class="old-price">${room.oldPrice}</span>
+                                                <span class="per-night">/ Noche</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="rating mb-3">
+                                            {Array(5).fill(0).map((_, i) => (
+                                                <i class={`fa fa-star ${i < room.stars ? 'text-warning' : 'text-muted'}`}></i>
+                                            ))}
+                                        </div>
+                                        
+                                        <p class="card-text">{room.description}</p>
+                                        
+                                        <div class="room-services d-flex flex-wrap mb-3">
+                                            <span class="service-item me-3 mb-2">
+                                                <i class="fa fa-user"></i> {room.capacity} Personas
+                                            </span>
+                                            <span class="service-item me-3 mb-2">
+                                                <i class="fa fa-bed"></i> {room.bed}
+                                            </span>
+                                            {room.services.map((service) => (
+                                                <span class="service-item me-3 mb-2">
+                                                    <i class="fa fa-check"></i> {service}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href={`/room/${room.id}`} class="btn btn-outline-secondary">Ver Detalles</a>
+                                            <a href={`/booking/${room.id}`} class="btn btn-primary">Reservar Ahora</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    
+                    <!-- Paginación -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-5">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+</HotelLayout>
+
+<script>
+// Script para actualizar el valor del rango de precio
+document.addEventListener('DOMContentLoaded', function() {
+    const priceRange = document.getElementById('priceRange');
+    const priceValue = document.getElementById('priceValue');
+    
+    if (priceRange && priceValue) {
+        priceRange.addEventListener('input', function() {
+            priceValue.textContent = '$' + (this as HTMLInputElement).value;
+        });
+    }
+});
+</script>
+
+<style>
+/* Estilos específicos para esta página */
+
+.full-page-split__wrapper {
+    display: grid;
+    grid-template-columns: 4fr 4fr;
+    min-height: 100vh;
+  }
+  .full-page-split__image-section {
+    position: relative;
+  }
+  .full-page-split__image-section :global(img) {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+  }
+  .full-page-split__logo {
+    background-color: var(--theme-surface-1);
+    color: var(--theme-on-surface-1);
+    padding: 0.5rem 1rem;
+    border-radius: var(--theme-shape-radius);
+    top: 1rem;
+    left: 1rem;
+    position: absolute;
+    z-index: 1;
+  }
+  .full-page-split__content-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .full-page-split__content-container {
+    margin: 1rem;
+    padding: 2rem;
+    background-color: var(--theme-surface-1);
+    color: var(--theme-on-surface-1);
+    border-radius: var(--theme-shape-radius);
+  }
+  .full-page-split__content-container h1 {
+    font-size: var(--font-size-xl);
+  }
+
+.sidebar-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.sidebar-item h4 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.sidebar-item h4:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: #0d6efd;
+}
+
+.price-box {
+    text-align: right;
+}
+
+.price {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0d6efd;
+}
+
+.old-price {
+    font-size: 16px;
+    text-decoration: line-through;
+    color: #888;
+    margin-left: 5px;
+}
+
+.per-night {
+    font-size: 14px;
+    color: #888;
+}
+
+.service-item {
+    font-size: 14px;
+}
+
+.service-item i {
+    margin-right: 5px;
+    color: #0d6efd;
+}
+
+/* Estilo responsivo */
+@media (max-width: 767px) {
+    .sidebar {
+        margin-bottom: 30px;
+    }
+    
+    .room-item .card-body {
+        padding: 20px;
+    }
+}
+
+/* Estilos para compatibilidad con Odyssey Theme */
+:root {
+    scroll-behavior: smooth;
+}
+
+#content {
+    min-height: 70vh;
+}
+</style>

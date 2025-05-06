@@ -1,0 +1,118 @@
+---
+import { Icon } from 'astro-icon/components';
+import {
+	Button,
+	CustomerQuoteSection,
+	ThreeColumnTextSection,
+	YouTubeEmbedSection,
+	StickyTextImageSection,
+	CtaCardSection,
+} from '@components/odyssey-theme';
+
+import Layout from '../layouts/Page.astro';
+import TextAndImageHero from '../components/sections/heros/TextAndImageHero.astro';
+
+const seo = {
+	title: 'Hotel Paraíso | Pasadías y Alquiler de Habitaciones',
+	description: 'Disfruta de un día inolvidable o una noche de descanso en Hotel Paraíso. Ofrecemos pasadías, hospedaje y experiencias únicas frente al mar.',
+};
+---
+
+<Layout {seo}>
+	<TextAndImageHero reversed>
+		<div slot="text-container">
+			<h1>Bienvenido a Hotel Paraíso</h1>
+			<p>Pasadías, habitaciones y experiencias inolvidables frente al mar.</p>
+		</div>
+		<div slot="btns-container">
+			<Button href="/reservas" customIcon>
+				Reservar Ahora
+				<Fragment slot="icon">
+					<Icon name="ic:baseline-chevron-right" />
+				</Fragment>
+			</Button>
+		</div>
+		<picture slot="image-container">
+			<img
+				src="/assets/images/landing-1/landing-hero-1.jpg"
+				alt="Vista aérea del Hotel Paraíso"
+				id="home-hero-image"
+			/>
+		</picture>
+	</TextAndImageHero>
+
+	<CustomerQuoteSection
+		quoteText="Pasamos un día espectacular. Las instalaciones limpias, buena atención y la piscina increíble. ¡Repetiremos!"
+		customerName="Laura Gómez"
+	/>
+
+	<ThreeColumnTextSection>
+		<div slot="column-1-body">
+			<h2>Pasadías</h2>
+			<p>
+				Acceso a piscina, zonas verdes, restaurante y zonas de descanso.
+				Perfecto para relajarte y disfrutar del día sin preocuparte por nada.
+			</p>
+		</div>
+		<Button slot="column-1-cta" href="/pasadias">Ver Más</Button>
+
+		<div slot="column-2-body">
+			<h2>Habitaciones</h2>
+			<p>
+				Cómodas habitaciones privadas con aire acondicionado, baño privado y
+				todo lo necesario para tu descanso. Ideal para parejas o familias.
+			</p>
+		</div>
+		<Button slot="column-2-cta" outlined href="/habitaciones">Explorar</Button>
+
+		<div slot="column-3-body">
+			<h2>Eventos</h2>
+			<p>
+				Organiza cumpleaños, reuniones familiares o actividades corporativas
+				en un ambiente natural, amplio y acogedor.
+			</p>
+		</div>
+		<Button slot="column-3-cta" href="/eventos">Solicitar Cotización</Button>
+	</ThreeColumnTextSection>
+
+	<YouTubeEmbedSection
+		url="https://www.youtube.com/watch?v=m8zB2QX30RQ"
+		rounded
+	/>
+
+	<StickyTextImageSection>
+		<div slot="text-container">
+			<h2>Servicios Destacados</h2>
+			<h3>Wi-Fi Gratis</h3>
+			<p>Conéctate cuando lo necesites, incluso en zonas al aire libre.</p>
+			<h3>Restaurante Local</h3>
+			<p>Sabores típicos de la región con ingredientes frescos del día.</p>
+			<h3>Pet Friendly</h3>
+			<p>Tu mascota es bienvenida. Contamos con zonas para su comodidad.</p>
+		</div>
+		<picture slot="image-container">
+			<img
+				src="/assets/images/hotel/servicios.jpg"
+				alt="Piscina del hotel al atardecer"
+				loading="lazy"
+			/>
+		</picture>
+	</StickyTextImageSection>
+
+	<CtaCardSection
+		background="var(--theme-surface-2)"
+		color="var(--theme-on-surface-2)"
+	>
+		<h2>Haz tu Reserva Hoy</h2>
+		<p>
+			Ya sea una escapada rápida o una celebración especial, en Hotel Paraíso
+			te ayudamos a crear momentos inolvidables.
+		</p>
+		<Button href="/reservas" customIcon>
+			Reservar Ahora
+			<Fragment slot="icon">
+				<Icon name="ic:baseline-chevron-right" />
+			</Fragment>
+		</Button>
+	</CtaCardSection>
+</Layout>
