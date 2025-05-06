@@ -10,7 +10,7 @@ RUN npm install
 COPY . .
 
 # Puerto que expone NestJS por defecto
-EXPOSE 3001
+EXPOSE 3000
 
 # Comando para desarrollo
 CMD ["npm", "run", "start:dev"]

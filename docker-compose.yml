@@ -5,7 +5,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "4321:4321"  # Astro usa el puerto 4321 por defecto
+      - "4321:4321"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -20,10 +20,17 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"  # NestJS usa el puerto 3000
+      - "3001:3001"  # Cambiado a 3001 según tu .env
     volumes:
       - ./backend:/app
       - /app/node_modules
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PORT: ${PORT}
+    depends_on:
+      - postgres
     networks:
       - app-network
 
@@ -33,9 +40,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -46,8 +53,8 @@ services:
     image: dpage/pgadmin4
     container_name: pgadmin
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
       - "5050:80"
     depends_on:
