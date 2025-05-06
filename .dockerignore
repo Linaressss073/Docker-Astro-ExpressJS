@@ -1,7 +1,9 @@
-node_modules
-npm-debug.log
-dist
-.git
-.gitignore
-.docker
-README.md
+**/node_modules
+**/dist
+**/.git
+**/.gitignore
+**/.vscode
+**/.DS_Store
+**/npm-debug.log
+**/.env
+**/.env.local
