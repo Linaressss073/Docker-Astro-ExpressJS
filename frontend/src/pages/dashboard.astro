@@ -1,0 +1,48 @@
+---
+import Layout from '../layouts/Base.astro';
+const seo = {
+  title: 'Dashboard | Hotel Paraíso',
+  description: 'Panel de usuario de Hotel Paraíso',
+};
+---
+<Layout seo={seo}>
+  <div class="dashboard">
+    <header class="dashboard__header">
+      <h1>Dashboard del Usuario</h1>
+      <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+    </header>
+    
+    <div class="dashboard__content">
+      <div class="dashboard__welcome">
+        <h2>Bienvenido, <span id="nombre-usuario">Usuario</span></h2>
+        <p>Desde aquí puedes gestionar tus reservas y preferencias.</p>
+      </div>
+      
+      <div class="dashboard__cards">
+        <div class="dashboard__card">
+          <h3>Mis Reservas</h3>
+          <p>Ver y gestionar tus reservas activas o pasadas.</p>
+          <a href="/reservas" class="dashboard__link">Ir a Reservas</a>
+        </div>
+
+        <div class="dashboard__card">
+          <h3>Mis Eventos</h3>
+          <p>Consulta y organiza eventos especiales en el hotel.</p>
+          <a href="/eventos" class="dashboard__link">Ver Eventos</a>
+        </div>
+
+        <div class="dashboard__card">
+          <h3>Servicios</h3>
+          <p>Solicita servicios adicionales durante tu estadía.</p>
+          <a href="/servicios" class="dashboard__link">Ver Servicios</a>
+        </div>
+        
+        <div class="dashboard__card">
+          <h3>Mi Perfil</h3>
+          <p>Actualiza tus datos personales y preferencias.</p>
+          <a href="/perfil" class="dashboard__link">Editar Perfil</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

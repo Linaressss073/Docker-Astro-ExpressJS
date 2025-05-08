@@ -1,18 +1,15 @@
 ---
 import Layout from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
-
 const seo = {
   title: 'Registro | Hotel Paraíso',
   description: 'Crea una cuenta para acceder a promociones y reservas exclusivas.',
 };
 ---
-
 <Layout seo={seo}>
   <head>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   </head>
-
   <div class="full-page-split__wrapper">
     <section class="full-page-split__image-section">
       <div class="full-page-split__logo">
@@ -28,12 +25,20 @@ const seo = {
         />
       </picture>
     </section>
-
     <section class="full-page-split__content-section">
       <div class="full-page-split__content-container">
         <h1>Crear Cuenta</h1>
         <p>Regístrate para realizar reservas y recibir beneficios exclusivos.</p>
-        <form method="POST" action="/api/registro">
+        
+        <div id="mensaje-exito" class="mensaje mensaje-exito" style="display: none;">
+          ¡Registro exitoso! Ahora puedes <a href="/login">iniciar sesión</a>.
+        </div>
+        
+        <div id="mensaje-error" class="mensaje mensaje-error" style="display: none;">
+          Error al registrarse. Por favor, inténtalo de nuevo.
+        </div>
+        
+        <form id="formulario-registro">
           <label>
             Usuario:
             <input type="text" name="usuario" required />
@@ -46,10 +51,8 @@ const seo = {
             Confirmar contraseña:
             <input type="password" name="confirmar" required />
           </label>
-
           <!-- Captcha -->
-          <div class="g-recaptcha" data-sitekey="6LfAiS0rAAAAAPv8IFCJSNSlN7vWFZa_s4oJngCS"></div>
-
+          <div class="g-recaptcha" data-sitekey="6LdZrDIrAAAAAFkqC_H-yONygPfq9aXkvxZc90zG"></div>
           <button type="submit">Registrarme</button>
           <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
         </form>
@@ -119,6 +122,21 @@ const seo = {
   button:hover {
     background-color: var(--theme-primary-dark);
   }
+  .mensaje {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+  }
+  .mensaje-exito {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  .mensaje-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
   @media(max-width: 768px) {
     .full-page-split__wrapper {
       grid-template-columns: 1fr;
@@ -129,3 +147,72 @@ const seo = {
     }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const formulario = document.getElementById('formulario-registro');
+    const mensajeExito = document.getElementById('mensaje-exito');
+    const mensajeError = document.getElementById('mensaje-error');
+
+    formulario.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(formulario);
+      const usuario = formData.get('usuario');
+      const clave = formData.get('clave');
+      const confirmar = formData.get('confirmar');
+      
+      // Validación básica
+      if (clave !== confirmar) {
+        mensajeError.textContent = 'Las contraseñas no coinciden';
+        mensajeError.style.display = 'block';
+        mensajeExito.style.display = 'none';
+        return;
+      }
+
+      // Captcha
+      const captchaResponse = grecaptcha.getResponse();
+      if (!captchaResponse) {
+        mensajeError.textContent = 'Por favor, completa el captcha';
+        mensajeError.style.display = 'block';
+        mensajeExito.style.display = 'none';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/registro', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            usuario,
+            clave,
+            confirmar,
+            captcha: captchaResponse
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          formulario.reset();
+          mensajeExito.style.display = 'block';
+          mensajeError.style.display = 'none';
+          // Opcionalmente, redirigir al usuario después de un tiempo
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 3000);
+        } else {
+          mensajeError.textContent = data.message || 'Error al registrarse';
+          mensajeError.style.display = 'block';
+          mensajeExito.style.display = 'none';
+        }
+      } catch (error) {
+        mensajeError.textContent = 'Error de conexión. Inténtalo de nuevo.';
+        mensajeError.style.display = 'block';
+        mensajeExito.style.display = 'none';
+      }
+    });
+  });
+</script>

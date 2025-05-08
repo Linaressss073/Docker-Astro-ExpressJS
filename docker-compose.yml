@@ -1,4 +1,7 @@
+version: '3.8'
+
 services:
+  # Frontend (Astro)
   frontend:
     container_name: astro-app
     build:
@@ -14,13 +17,14 @@ services:
     networks:
       - app-network
 
+  # Backend (NestJS)
   backend:
     container_name: nestjs-api
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3001:3001"  # Cambiado a 3001 según tu .env
+      - "3001:3001"  # Puerto del backend
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -28,12 +32,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      DB_HOST: postgres  # Nombre del servicio de PostgreSQL
       PORT: ${PORT}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - postgres
     networks:
       - app-network
 
+  # PostgreSQL
   postgres:
     image: postgres:15-alpine
     container_name: postgres-db
@@ -49,6 +56,7 @@ services:
     networks:
       - app-network
 
+  # pgAdmin
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -56,7 +64,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
-      - "5050:80"
+      - "5050:80"  # Acceso a pgAdmin
     depends_on:
       - postgres
     restart: unless-stopped

@@ -1,13 +1,11 @@
 ---
 import Layout from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
-
 const seo = {
 	title: 'Iniciar Sesión | Hotel Paraíso',
 	description: 'Accede a tu cuenta en Hotel Paraíso.',
 };
 ---
-
 <Layout seo={seo}>
   <div class="full-page-split__wrapper">
     <section class="full-page-split__image-section">
@@ -24,12 +22,16 @@ const seo = {
         />
       </picture>
     </section>
-
     <section class="full-page-split__content-section">
       <div class="full-page-split__content-container">
         <h1>Iniciar Sesión</h1>
         <p>Ingresa tus datos para acceder a tu cuenta.</p>
-        <form method="POST" action="/api/login">
+        
+        <div id="mensaje-error" class="mensaje mensaje-error" style="display: none;">
+          Usuario o contraseña incorrectos.
+        </div>
+        
+        <form id="formulario-login">
           <label>
             Usuario:
             <input type="text" name="usuario" required />
@@ -107,6 +109,16 @@ const seo = {
   button:hover {
     background-color: var(--theme-primary-dark);
   }
+  .mensaje {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+  }
+  .mensaje-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
   @media(max-width: 768px) {
     .full-page-split__wrapper {
       grid-template-columns: 1fr;
@@ -117,3 +129,48 @@ const seo = {
     }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const formulario = document.getElementById('formulario-login');
+    const mensajeError = document.getElementById('mensaje-error');
+
+    formulario.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(formulario);
+      const usuario = formData.get('usuario');
+      const clave = formData.get('clave');
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            usuario,
+            clave
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.access_token) {
+          // Guardar el token en localStorage
+          localStorage.setItem('token', data.access_token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          
+          // Redirigir al dashboard o página principal
+          window.location.href = '/dashboard';
+        } else {
+          mensajeError.textContent = data.message || 'Usuario o contraseña incorrectos';
+          mensajeError.style.display = 'block';
+        }
+      } catch (error) {
+        mensajeError.textContent = 'Error de conexión. Inténtalo de nuevo.';
+        mensajeError.style.display = 'block';
+      }
+    });
+  });
+</script>
