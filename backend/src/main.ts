@@ -7,7 +7,7 @@ async function bootstrap() {
   
   // Habilitar CORS para permitir peticiones desde el frontend
   app.enableCors({
-    origin: ['http://localhost:4321', 'http://localhost:3000'], // Puertos de desarrollo de Astro y NestJS
+    origin: ['http://localhost:4321', 'http://localhost:3001'], // Puertos de desarrollo de Astro y NestJS
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
@@ -21,6 +21,6 @@ async function bootstrap() {
     }),
   );
   
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();
