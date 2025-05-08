@@ -5,35 +5,52 @@ import type { Props as BaseHeadProps } from '../components/head/BaseHead.astro';
 import Logo from '../components/Logo.astro';
 import settings from '../config/settings';
 import { footerLists } from '../config/footer';
-
-
 export interface Props {
-	seo?: BaseHeadProps;
+    seo?: BaseHeadProps;
 }
-
 import { nav } from '../config/nav.js';
-
 const { seo } = Astro.props as Props;
 ---
 
 <Layout seo={seo}>
-	<Header rightMenu navData={nav} slot="header">
-		<span slot="logo">
-			<Logo />
-		</span>
-		<Button slot="action-item" href="/login">Inicio de sesion</Button>
-	</Header>
-	<div id="page">
-		<slot />
-	</div>
-	<Footer
-		slot="footer"
-		background="var(--theme-surface-1)"
-		color="var(--theme-on-surface-1)"
-		footerLists={footerLists}
-		copyrightName={settings.name}
-    showPlug={settings.showPlug}
-	>
-		<Logo slot="logo" />
-	</Footer>
+    <Header rightMenu navData={nav} slot="header">
+        <span slot="logo">
+            <Logo />
+        </span>
+        <Button slot="action-item" href="/login">Inicio de sesion</Button>
+    </Header>
+    <div id="page">
+        <slot />
+    </div>
+    <Footer
+        slot="footer"
+        background="var(--theme-surface-1)"
+        color="var(--theme-on-surface-1)"
+        footerLists={footerLists}
+        copyrightName={settings.name}
+        showPlug={settings.showPlug}
+    >
+        <Logo slot="logo" />
+    </Footer>
+
+    <!-- Dialogflow Messenger Chatbot -->
+    <df-messenger
+        intent="WELCOME"
+        chat-title="ChatbotPrueba"
+        agent-id="cb9eb1b3-9cd4-4882-bcf7-dc2b9c7e02a8"
+        language-code="es">
+    </df-messenger>
+
+    <!-- Script de Dialogflow Messenger -->
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 </Layout>
+
+<style is:global>
+    /* Estilos para el chatbot de Dialogflow */
+    df-messenger {
+        z-index: 999;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+    }
+</style>

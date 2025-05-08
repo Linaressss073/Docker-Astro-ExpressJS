@@ -1,0 +1,163 @@
+---
+import { TextSection } from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+import HeroSection from '../../components/sections/heros/HeroSection.astro';
+
+const seo = {
+  title: 'Términos y Condiciones | Hotel Paraíso',
+  description: 'Conoce los términos y condiciones de uso de los servicios de Hotel Paraíso.',
+};
+---
+
+<Layout {seo}>
+  <HeroSection>
+    <div slot="text-container">
+      <h1>Términos y Condiciones</h1>
+      <p>
+        Bienvenido a Hotel Paraíso. Al utilizar nuestros servicios, aceptas
+        estos términos y condiciones en su totalidad.
+      </p>
+    </div>
+    <picture slot="image-container">
+      <img
+        src="/assets/images/terminos/terms-hero.jpg"
+        alt="Un documento legal con un sello, simbolizando términos"
+        id="terms-hero-image"
+      />
+    </picture>
+  </HeroSection>
+
+  <TextSection narrow>
+    <h2>1. General</h2>
+    <p>
+      Estos Términos y Condiciones ("Términos") rigen el uso de los servicios
+      ofrecidos por Hotel Paraíso ("el Hotel", "nosotros", "nuestro") a través
+      de nuestro sitio web, en persona o por cualquier otro medio. Al realizar
+      una reserva o utilizar nuestros servicios, aceptas estar sujeto a estos
+      Términos.
+    </p>
+
+    <h2>2. Reservas y Pagos</h2>
+    <h3>2.1. Proceso de Reserva</h3>
+    <p>
+      Las reservas se pueden realizar a través de nuestro sitio web, por teléfono
+      o en persona. Todas las reservas están sujetas a disponibilidad. Al
+      confirmar una reserva, se te solicitará la información necesaria para
+      procesar la misma, incluyendo datos personales y de pago.
+    </p>
+    <h3>2.2. Precios</h3>
+    <p>
+      Todos los precios se muestran en [Moneda Local, e.g., COP] e incluyen los
+      impuestos aplicables, a menos que se indique lo contrario. Nos reservamos
+      el derecho de cambiar los precios en cualquier momento sin previo aviso,
+      sin afectar las reservas ya confirmadas.
+    </p>
+    <h3>2.3. Pago</h3>
+    <p>
+      El pago completo o un depósito puede ser requerido al momento de la
+      reserva, según la política de tarifas y el tipo de reserva. Aceptamos
+      diversas formas de pago, como tarjetas de crédito/débito, transferencias
+      bancarias, etc. Los detalles de pago se procesan de forma segura a través
+      de proveedores de servicios de pago de terceros.
+    </p>
+
+    <h2>3. Cancelaciones y Modificaciones</h2>
+    <h3>3.1. Política de Cancelación</h3>
+    <p>
+      La política de cancelación varía según el tipo de tarifa y la temporada.
+      Consulta las condiciones específicas de cancelación al momento de realizar
+      tu reserva. Las cancelaciones fuera del plazo establecido pueden estar
+      sujetas a cargos.
+    </p>
+    <h3>3.2. Modificaciones</h3>
+    <p>
+      Las solicitudes de modificación de reservas están sujetas a disponibilidad
+      y pueden implicar cargos adicionales o cambios en la tarifa original.
+      Las modificaciones deben solicitarse con suficiente antelación.
+    </p>
+    <h3>3.3. No Show</h3>
+    <p>
+      En caso de "no show" (no presentarse en la fecha de llegada sin aviso
+      previo), se aplicarán cargos según la política de reserva.
+    </p>
+
+    <h2>4. Uso de las Instalaciones del Hotel</h2>
+    <h3>4.1. Registro de Entrada (Check-in) y Salida (Check-out)</h3>
+    <p>
+      El horario de check-in es a partir de las [Hora de Check-in, e.g., 15:00]
+      y el check-out es hasta las [Hora de Check-out, e.g., 12:00]. Las
+      solicitudes de check-in temprano o check-out tardío están sujetas a
+      disponibilidad y pueden incurrir en cargos adicionales.
+    </p>
+    <h3>4.2. Conducta de los Huéspedes</h3>
+    <p>
+      Se espera que los huéspedes se comporten de manera respetuosa con el
+      personal, otros huéspedes y las instalaciones del hotel. El Hotel se
+      reserva el derecho de negar o finalizar el servicio a cualquier huésped
+      cuya conducta sea considerada inapropiada o perturbadora.
+    </p>
+    <h3>4.3. Daños y Pérdidas</h3>
+    <p>
+      Los huéspedes son responsables de cualquier daño causado a las
+      instalaciones, mobiliario o propiedad del hotel durante su estancia, ya
+      sea intencional o por negligencia. El Hotel se reserva el derecho de
+      cargar el costo de las reparaciones o reemplazos a la tarjeta de crédito
+      registrada del huésped.
+    </p>
+    <h3>4.4. Objetos de Valor</h3>
+    <p>
+      El Hotel no se hace responsable por la pérdida o robo de objetos de valor
+      personales de los huéspedes. Se recomienda el uso de las cajas fuertes
+      disponibles en las habitaciones o en la recepción.
+    </p>
+
+    <h2>5. Propiedad Intelectual</h2>
+    <p>
+      Todo el contenido de este sitio web, incluyendo textos, gráficos, logotipos,
+      imágenes, videos y software, es propiedad de Hotel Paraíso o de sus
+      licenciantes y está protegido por leyes de derechos de autor y marcas
+      registradas. No se permite el uso no autorizado de dicho contenido.
+    </p>
+
+    <h2>6. Limitación de Responsabilidad</h2>
+    <p>
+      Hotel Paraíso no será responsable por cualquier daño directo, indirecto,
+      incidental, consecuente o punitivo que surja del uso o la imposibilidad
+      de usar nuestros servicios o este sitio web, incluyendo pero no limitado
+      a la pérdida de ganancias, datos o interrupción del negocio.
+    </p>
+    <p>
+      A pesar de nuestros esfuerzos por garantizar la precisión de la información
+      en este sitio web, no garantizamos que sea completamente libre de errores
+      o interrupciones.
+    </p>
+
+    <h2>7. Ley Aplicable y Jurisdicción</h2>
+    <p>
+      Estos Términos se rigen e interpretan de acuerdo con las leyes de
+      [País/Región, e.g., Colombia]. Cualquier disputa que surja de estos
+      Términos estará sujeta a la jurisdicción exclusiva de los tribunales
+      de [Ciudad, e.g., Bogotá, Colombia].
+    </p>
+
+    <h2>8. Cambios en los Términos y Condiciones</h2>
+    <p>
+      Nos reservamos el derecho de actualizar o modificar estos Términos y
+      Condiciones en cualquier momento sin previo aviso. La versión más reciente
+      estará siempre disponible en nuestro sitio web. Se recomienda revisar
+      esta página regularmente para estar al tanto de cualquier cambio. El uso
+      continuo de nuestros servicios después de la publicación de los cambios
+      constituye la aceptación de los mismos.
+    </p>
+
+    <h2>9. Contacto</h2>
+    <p>
+      Si tienes alguna pregunta o inquietud sobre estos Términos y Condiciones,
+      por favor contáctanos a través de:
+    </p>
+    <ul class="list-disc list-inside mb-6">
+      <li><strong>Correo electrónico:</strong> info@hotelparaiso.com</li>
+      <li><strong>Teléfono:</strong> +57 123 4567</li>
+    </ul>
+  </TextSection>
+</Layout>

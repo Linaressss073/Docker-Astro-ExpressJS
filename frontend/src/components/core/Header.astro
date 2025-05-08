@@ -46,11 +46,14 @@ const { navData, rightMenu } = Astro.props;
       <Icon name="ic:baseline-menu" width="24px" height="24px" />
     </span>
     <span id="menuButtonIconClose" hidden>
-      <Icon name="ic:baseline-close" width="24px" height="24px" />
+      <Icon name="ic:baseline-close" width="30px" height="24px" />
     </span>
   </button>
   <a class="header-logo__link" href="/">
     <slot name="logo">
+      <span id="menuButtonIconClose" hidden>
+        <Icon name="ic:baseline-close" width="30px" height="24px" />
+      </span>
     </slot>
   </a>
   </div>
@@ -90,7 +93,7 @@ const { navData, rightMenu } = Astro.props;
   }
   .header-logo-menu__container {
     display: flex;
-    align-items: center;
+    align-items: right;
     z-index: 100;
   }
   .header-action-item__container {
@@ -114,7 +117,7 @@ const { navData, rightMenu } = Astro.props;
   }
   nav ul {
     margin: 0;
-    padding: 0;
+    padding: 4px ;
     list-style: none;
     display: flex;
   }
