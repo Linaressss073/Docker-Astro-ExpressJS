@@ -22,19 +22,19 @@ const seo = {
         <div class="dashboard__card">
           <h3>Mis Reservas</h3>
           <p>Ver y gestionar tus reservas activas o pasadas.</p>
-          <a href="/reservas" class="dashboard__link">Ir a Reservas</a>
+          <a href="/mis-reservas" class="dashboard__link">Ir a Mis Reservas</a>
         </div>
 
         <div class="dashboard__card">
           <h3>Mis Eventos</h3>
           <p>Consulta y organiza eventos especiales en el hotel.</p>
-          <a href="/eventos" class="dashboard__link">Ver Eventos</a>
+          <a href="/mis-eventos" class="dashboard__link">Ver Mis Eventos</a>
         </div>
 
         <div class="dashboard__card">
           <h3>Servicios</h3>
           <p>Solicita servicios adicionales durante tu estadía.</p>
-          <a href="/servicios" class="dashboard__link">Ver Servicios</a>
+          <a href="/mis-servicios" class="dashboard__link">Ver Mis Servicios</a>
         </div>
         
         <div class="dashboard__card">
@@ -46,3 +46,108 @@ const seo = {
     </div>
   </div>
 </Layout>
+
+<style>
+  .dashboard {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: var(--theme-on-surface-1); /* Asegura contraste con el fondo */
+  }
+
+  .dashboard__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--theme-border, #ccc); /* Color de borde por defecto */
+  }
+
+  .dashboard__header h1 {
+    font-size: var(--font-size-xl, 2rem); /* Tamaño de fuente por defecto */
+    color: var(--theme-primary, #333); /* Color primario por defecto */
+  }
+
+  .btn-logout {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--theme-error, #dc3545); /* Color de error por defecto */
+    color: white;
+    border: none;
+    border-radius: var(--theme-shape-radius, 4px); /* Radio de borde por defecto */
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-logout:hover {
+    background-color: var(--theme-error-dark, #c82333); /* Color de error oscuro por defecto */
+  }
+
+  .dashboard__welcome {
+    margin-bottom: 2.5rem;
+    text-align: left;
+  }
+
+  .dashboard__welcome h2 {
+    font-size: var(--font-size-lg, 1.5rem); /* Tamaño de fuente por defecto */
+    margin-bottom: 0.5rem;
+  }
+
+  .dashboard__welcome p {
+    font-size: var(--font-size-md, 1rem); /* Tamaño de fuente por defecto */
+    color: var(--theme-on-surface-2, #555); /* Color secundario por defecto */
+  }
+
+  .dashboard__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .dashboard__card {
+    background-color: var(--theme-surface-2, #f9f9f9); /* Color de superficie secundario por defecto */
+    padding: 1.5rem;
+    border-radius: var(--theme-shape-radius-lg, 8px); /* Radio de borde grande por defecto */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .dashboard__card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .dashboard__card h3 {
+    font-size: var(--font-size-md-lg, 1.25rem); /* Tamaño de fuente medio-grande por defecto */
+    color: var(--theme-primary, #333);
+    margin-bottom: 0.75rem;
+  }
+
+  .dashboard__card p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .dashboard__link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: var(--theme-primary, #007bff);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--theme-shape-radius, 4px);
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+  }
+
+  .dashboard__link:hover {
+    background-color: var(--theme-primary-dark, #0056b3);
+  }
+</style>
+
+<script>
+  import { authGuard, setupLogoutButton, personalizeGreeting } from '../js/auth';
+  authGuard();
+  setupLogoutButton();
+  personalizeGreeting(); // Llama a esta función para actualizar el nombre de usuario
+</script>

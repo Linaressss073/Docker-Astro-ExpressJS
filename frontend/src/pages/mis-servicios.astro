@@ -1,0 +1,64 @@
+---
+import Layout from '../layouts/Base.astro';
+
+const seo = {
+  title: 'Mis Servicios | Hotel Paraíso',
+  description: 'Gestiona los servicios adicionales solicitados.',
+};
+---
+<Layout seo={seo}>
+  <div class="page-container">
+    <header class="page-header">
+      <h1>Mis Servicios Solicitados</h1>
+      <div class="header-actions">
+        <a href="/dashboard" class="btn-secondary">Volver al Dashboard</a>
+        <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="servicios-list">
+        <p>No has solicitado servicios adicionales recientemente. <a href="/servicios">Descubre nuestros servicios</a>.</p>
+        <!-- 
+          Aquí iría la lógica para mostrar los servicios solicitados por el usuario.
+          Ejemplo de una tarjeta de servicio:
+        -->
+        <!--
+        <div class="servicio-card">
+          <h3>Servicio de Habitación - Cena</h3>
+          <p><strong>Fecha Solicitud:</strong> 2024-08-16</p>
+          <p><strong>Estado:</strong> Entregado</p>
+          <a href="/servicios/detalle/cena-123" class="btn-primary">Ver Detalles</a>
+        </div>
+        -->
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  @import '../styles/dashboard-common.css';
+
+  .servicios-list p {
+    padding: 1rem;
+    background-color: var(--theme-surface-2);
+    border-radius: var(--theme-shape-radius);
+    text-align: center;
+  }
+   .servicio-card {
+    background-color: var(--theme-surface-2, #f9f9f9);
+    padding: 1.5rem;
+    border-radius: var(--theme-shape-radius-lg, 8px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+  }
+  .servicio-card h3 {
+    color: var(--theme-primary);
+  }
+</style>
+
+<script>
+  import { authGuard, setupLogoutButton } from '../js/auth';
+  authGuard();
+  setupLogoutButton();
+</script>

@@ -19,10 +19,10 @@ services:
 
   # Backend (NestJS)
   backend:
-    container_name: nestjs-api
+    container_name: express-api # Cambiado para reflejar que es Express
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile # Asegúrate que este Dockerfile es el de Express.js
     ports:
       - "3001:3001"  # Puerto del backend
     volumes:
@@ -32,7 +32,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-      DB_HOST: postgres  # Nombre del servicio de PostgreSQL
+      DB_HOST: postgres  # Nombre del servicio de PostgreSQL (si tu Express app lo usa)
       PORT: ${PORT}
       JWT_SECRET: ${JWT_SECRET}
     depends_on:

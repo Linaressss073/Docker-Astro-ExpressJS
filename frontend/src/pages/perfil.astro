@@ -1,0 +1,107 @@
+---
+import Layout from '../layouts/Base.astro';
+
+const seo = {
+  title: 'Mi Perfil | Hotel Paraíso',
+  description: 'Gestiona tu información personal y preferencias.',
+};
+---
+<Layout seo={seo}>
+  <div class="page-container">
+    <header class="page-header">
+      <h1>Mi Perfil</h1>
+      <div class="header-actions">
+        <a href="/dashboard" class="btn-secondary">Volver al Dashboard</a>
+        <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="profile-section">
+        <h2>Información Personal</h2>
+        <p>Aquí podrás ver y actualizar tus datos personales.</p>
+        <!-- Ejemplo de campos (a implementar con formularios y lógica) -->
+        <div class="form-group">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" value="Usuario Ejemplo" readonly />
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" value="usuario@example.com" readonly />
+        </div>
+        <button class="btn-primary" disabled>Editar Perfil (Próximamente)</button>
+      </div>
+
+      <div class="profile-section">
+        <h2>Preferencias</h2>
+        <p>Configura tus preferencias para una mejor experiencia.</p>
+        <button class="btn-primary" disabled>Gestionar Preferencias (Próximamente)</button>
+      </div>
+
+       <div class="profile-section">
+        <h2>Seguridad</h2>
+        <p>Cambia tu contraseña.</p>
+        <button class="btn-primary" disabled>Cambiar Contraseña (Próximamente)</button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  /* Estilos importados o adaptados del dashboard para consistencia */
+  @import '../styles/dashboard-common.css'; /* Crear este archivo si es necesario */
+
+  .page-container {
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    color: var(--theme-on-surface-1);
+  }
+
+  .profile-section {
+    background-color: var(--theme-surface-2, #f9f9f9);
+    padding: 1.5rem;
+    border-radius: var(--theme-shape-radius-lg, 8px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+  }
+
+  .profile-section h2 {
+    font-size: var(--font-size-lg, 1.5rem);
+    color: var(--theme-primary, #333);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--theme-border, #eee);
+    padding-bottom: 0.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--theme-border, #ccc);
+    border-radius: var(--theme-shape-radius, 4px);
+    background-color: var(--theme-surface-1, #fff);
+  }
+
+  .form-group input[readonly] {
+    background-color: var(--theme-disabled-bg, #e9ecef);
+    cursor: not-allowed;
+  }
+</style>
+
+<script>
+  // Script de autenticación y logout (similar al del dashboard.astro)
+  import { authGuard, setupLogoutButton } from '../js/auth';
+  authGuard();
+  setupLogoutButton();
+</script>

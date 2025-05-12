@@ -1,0 +1,67 @@
+---
+import Layout from '../layouts/Base.astro';
+
+const seo = {
+  title: 'Mis Reservas | Hotel Paraíso',
+  description: 'Consulta y gestiona tus reservas de hotel.',
+};
+---
+<Layout seo={seo}>
+  <div class="page-container">
+    <header class="page-header">
+      <h1>Mis Reservas</h1>
+      <div class="header-actions">
+        <a href="/dashboard" class="btn-secondary">Volver al Dashboard</a>
+        <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="reservas-list">
+        <p>Actualmente no tienes reservas activas. <a href="/habitaciones">¡Haz una nueva reserva!</a></p>
+        <!-- 
+          Aquí iría la lógica para mostrar las reservas del usuario.
+          Ejemplo de una tarjeta de reserva (a generar dinámicamente):
+        -->
+        <!--
+        <div class="reserva-card">
+          <h3>Reserva #12345</h3>
+          <p><strong>Fecha de Entrada:</strong> 2024-08-15</p>
+          <p><strong>Fecha de Salida:</strong> 2024-08-18</p>
+          <p><strong>Habitación:</strong> Suite Deluxe</p>
+          <p><strong>Estado:</strong> Confirmada</p>
+          <a href="/reservas/12345" class="btn-primary">Ver Detalles</a>
+        </div>
+        -->
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  @import '../styles/dashboard-common.css';
+
+  .reservas-list p {
+    padding: 1rem;
+    background-color: var(--theme-surface-2);
+    border-radius: var(--theme-shape-radius);
+    text-align: center;
+  }
+
+  .reserva-card {
+    background-color: var(--theme-surface-2, #f9f9f9);
+    padding: 1.5rem;
+    border-radius: var(--theme-shape-radius-lg, 8px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+  }
+  .reserva-card h3 {
+    color: var(--theme-primary);
+  }
+</style>
+
+<script>
+  import { authGuard, setupLogoutButton } from '../js/auth';
+  authGuard();
+  setupLogoutButton();
+</script>

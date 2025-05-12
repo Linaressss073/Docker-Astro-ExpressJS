@@ -1,0 +1,109 @@
+/* Estilos comunes para páginas del dashboard */
+.page-container {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: var(--theme-on-surface-1, #333);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--theme-border, #e0e0e0);
+}
+
+.page-header h1 {
+  font-size: var(--font-size-xl, 2rem);
+  color: var(--theme-primary, #007bff);
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-logout {
+  padding: 0.65rem 1.25rem;
+  background-color: var(--theme-error, #dc3545);
+  color: white;
+  border: none;
+  border-radius: var(--theme-shape-radius, 4px);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  text-decoration: none; /* Para enlaces estilizados como botones */
+  display: inline-block; /* Para enlaces estilizados como botones */
+  text-align: center; /* Para enlaces estilizados como botones */
+}
+
+.btn-logout:hover {
+  background-color: var(--theme-error-dark, #c82333);
+}
+
+.btn-secondary {
+  padding: 0.65rem 1.25rem;
+  background-color: var(--theme-surface-3, #6c757d);
+  color: white;
+  border: none;
+  border-radius: var(--theme-shape-radius, 4px);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-secondary:hover {
+  background-color: var(--theme-surface-3-dark, #5a6268);
+}
+
+.btn-primary {
+  padding: 0.65rem 1.25rem;
+  background-color: var(--theme-primary, #007bff);
+  color: white;
+  border: none;
+  border-radius: var(--theme-shape-radius, 4px);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background-color: var(--theme-primary-dark, #0056b3);
+}
+
+.btn-primary[disabled] {
+  background-color: var(--theme-disabled-bg, #ccc);
+  cursor: not-allowed;
+}
+
+
+.page-content {
+  /* Estilos generales para el área de contenido si son necesarios */
+}
+
+/* Asegúrate de que las variables CSS estén definidas globalmente o añade fallbacks */
+:root {
+  --theme-primary: #007bff;
+  --theme-primary-dark: #0056b3;
+  --theme-error: #dc3545;
+  --theme-error-dark: #c82333;
+  --theme-surface-1: #ffffff;
+  --theme-surface-2: #f8f9fa;
+  --theme-surface-3: #6c757d;
+  --theme-surface-3-dark: #5a6268;
+  --theme-on-surface-1: #212529;
+  --theme-border: #dee2e6;
+  --theme-shape-radius: .25rem;
+  --theme-shape-radius-lg: .5rem;
+  --font-size-xl: 2rem;
+  --font-size-lg: 1.5rem;
+  --theme-disabled-bg: #e9ecef;
+}

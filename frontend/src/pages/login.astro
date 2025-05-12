@@ -33,8 +33,8 @@ const seo = {
         
         <form id="formulario-login">
           <label>
-            Usuario:
-            <input type="text" name="usuario" required />
+            Email:
+            <input type="email" name="email" required />
           </label>
           <label>
             Contraseña:
@@ -141,17 +141,18 @@ const seo = {
       e.preventDefault();
 
       const formData = new FormData(formulario);
-      const usuario = formData.get('usuario');
+      const email = formData.get('email'); // Cambiado de 'usuario' a 'email'
       const clave = formData.get('clave');
 
       try {
-        const response = await fetch('/api/auth/login', {
+        const backendUrl = import.meta.env.PUBLIC_BACKEND_URL || 'http://localhost:3001';
+        const response = await fetch(`${backendUrl}/api/auth/login`, { // Usamos backendUrl
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            usuario,
+            usuario: email, // Enviamos el email bajo la clave 'usuario' que espera el backend
             clave
           }),
         });

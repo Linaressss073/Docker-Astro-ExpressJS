@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Base.astro';
+
+const seo = {
+  title: 'Mis Eventos | Hotel Paraíso',
+  description: 'Consulta los eventos especiales en los que participas.',
+};
+---
+<Layout seo={seo}>
+  <div class="page-container">
+    <header class="page-header">
+      <h1>Mis Eventos</h1>
+      <div class="header-actions">
+        <a href="/dashboard" class="btn-secondary">Volver al Dashboard</a>
+        <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="eventos-list">
+        <p>No estás inscrito en ningún evento por el momento. <a href="/eventos-publicos">Explora nuestros eventos</a>.</p>
+        <!-- 
+          Aquí iría la lógica para mostrar los eventos del usuario.
+          Ejemplo de una tarjeta de evento:
+        -->
+        <!--
+        <div class="evento-card">
+          <h3>Conferencia Anual de Tecnología</h3>
+          <p><strong>Fecha:</strong> 2024-09-10</p>
+          <p><strong>Ubicación:</strong> Salón Principal</p>
+          <p><strong>Estado:</strong> Inscrito</p>
+          <a href="/eventos/conferencia-tech" class="btn-primary">Más Información</a>
+        </div>
+        -->
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  @import '../styles/dashboard-common.css';
+
+  .eventos-list p {
+    padding: 1rem;
+    background-color: var(--theme-surface-2);
+    border-radius: var(--theme-shape-radius);
+    text-align: center;
+  }
+  .evento-card {
+    background-color: var(--theme-surface-2, #f9f9f9);
+    padding: 1.5rem;
+    border-radius: var(--theme-shape-radius-lg, 8px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+  }
+   .evento-card h3 {
+    color: var(--theme-primary);
+  }
+</style>
+
+<script>
+  import { authGuard, setupLogoutButton } from '../js/auth';
+  authGuard();
+  setupLogoutButton();
+</script>

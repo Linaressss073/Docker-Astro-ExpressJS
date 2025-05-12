@@ -43,6 +43,10 @@ const seo = {
             <input type="text" name="usuario" required />
           </label>
           <label>
+            Email:
+            <input type="email" name="email" required />
+          </label>
+          <label>
             Contraseña:
             <input type="password" name="clave" required />
           </label>
@@ -158,11 +162,20 @@ const seo = {
       const formData = new FormData(formulario);
       const usuario = formData.get('usuario');
       const clave = formData.get('clave');
+      const email = formData.get('email');
       const confirmar = formData.get('confirmar');
       
       // Validación básica
       if (clave !== confirmar) {
         mensajeError.textContent = 'Las contraseñas no coinciden';
+        mensajeError.style.display = 'block';
+        mensajeExito.style.display = 'none';
+        return;
+      }
+
+      // Validación básica de email (opcional, pero recomendada)
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        mensajeError.textContent = 'Por favor, introduce un email válido.';
         mensajeError.style.display = 'block';
         mensajeExito.style.display = 'none';
         return;
@@ -178,13 +191,15 @@ const seo = {
       // }
 
       try {
-        const response = await fetch('/api/auth/register', {
+        const backendUrl = import.meta.env.PUBLIC_BACKEND_URL || 'http://localhost:3001'; // Usamos la variable de entorno
+        const response = await fetch(`${backendUrl}/api/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             usuario,
+            email, // Enviamos el email
             clave,
           }),
         });
