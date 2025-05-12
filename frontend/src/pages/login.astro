@@ -130,6 +130,8 @@ const seo = {
   }
 </style>
 
+
+// Script para colocar en la página de login.astro
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const formulario = document.getElementById('formulario-login');
@@ -143,7 +145,7 @@ const seo = {
       const clave = formData.get('clave');
 
       try {
-        const response = await fetch('/api/login', {
+        const response = await fetch('/api/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

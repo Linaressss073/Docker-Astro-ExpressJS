@@ -145,7 +145,7 @@ const seo = {
     }
   }
 </style>
-
+// Script para colocar en la página de registro.astro
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const formulario = document.getElementById('formulario-registro');
@@ -168,17 +168,17 @@ const seo = {
         return;
       }
 
-      // Captcha
-      const captchaResponse = grecaptcha.getResponse();
-      if (!captchaResponse) {
-        mensajeError.textContent = 'Por favor, completa el captcha';
-        mensajeError.style.display = 'block';
-        mensajeExito.style.display = 'none';
-        return;
-      }
+      // Desactivamos cualquier captcha para simplificar la integración
+      // const captchaResponse = grecaptcha.getResponse();
+      // if (!captchaResponse) {
+      //   mensajeError.textContent = 'Por favor, completa el captcha';
+      //   mensajeError.style.display = 'block';
+      //   mensajeExito.style.display = 'none';
+      //   return;
+      // }
 
       try {
-        const response = await fetch('/api/registro', {
+        const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -186,8 +186,6 @@ const seo = {
           body: JSON.stringify({
             usuario,
             clave,
-            confirmar,
-            captcha: captchaResponse
           }),
         });
 

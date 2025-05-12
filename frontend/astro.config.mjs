@@ -7,5 +7,14 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 4321
+  },
+   proxy: {
+      // Configuración para redirigir solicitudes API al backend
+      '/api': {
+        target: 'http://localhost:5000', // Puerto donde corre Express
+        changeOrigin: true,
+        secure: false
+      }
   }
 });
+
