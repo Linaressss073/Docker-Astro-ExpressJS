@@ -1,0 +1,460 @@
+---
+import Layout from '../layouts/Page.astro';
+import { Image } from 'astro:assets';
+import { menuLista } from '../../src/menu/menuLista.js';
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <div class="menu-hero">
+    <div class="container text-center">
+      <h1 class="menu-title">Nuestro Menú</h1>
+      <p class="menu-subtitle">Una experiencia culinaria única</p>
+    </div>
+  </div>
+
+  <!-- Menu Content -->
+  <main class="container py-5">
+    <div class="menu-wrapper">
+      <!-- Search and Filters -->
+      <div class="filters-section">
+        <input 
+          type="text" 
+          placeholder="Buscar en el menú..." 
+          class="search-input"
+        />
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="todos">Todos</button>
+          <button class="filter-btn" data-filter="vegetarianos">Vegetarianos</button>
+          <button class="filter-btn" data-filter="picantes">Picantes</button>
+          <button class="filter-btn" data-filter="nuevos">Nuevos</button>
+        </div>
+      </div>
+
+      <!-- Cart Actions -->
+      <div class="cart-actions">
+        <a href="/cart" class="cart-link" aria-label="Ver carrito de compras">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-icon"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          <span class="cart-text">Carrito: <span id="cart-count">0</span> ítems</span>
+        </a>
+        <a href="/checkout" class="checkout-btn">
+          Ir a Pagar
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="checkout-arrow-icon"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+
+      <!-- Menu Sections -->
+      {menuLista.map((section) => (
+        <section class="menu-section">
+          <h2 class="section-title">{section.name}</h2>
+          <div class="menu-grid">
+            {section.items.map((item) => (
+              <div 
+                class={`menu-item ${item.isVegetarian ? 'vegetarianos' : ''} ${item.isSpicy ? 'picantes' : ''} ${item.isNew ? 'nuevos' : ''}`}
+                data-name={item.name.toLowerCase()}
+                data-description={item.description.toLowerCase()}
+                key={item.id}
+              >
+                <div class="item-image-container">
+                  <Image 
+                    src={item.image} 
+                    alt={item.name}
+                    width={300}
+                    height={200}
+                    format="webp"
+                    loading="lazy"
+                    class="item-image"
+                  />
+                  {item.isNew && <span class="new-badge">Nuevo</span>}
+                </div>
+                <div class="item-content">
+                  <div class="item-header">
+                    <h3 class="item-title">
+                      {item.name}
+                      {item.isSpicy && <span class="badge spicy">Picante</span>}
+                      {item.isVegetarian && <span class="badge vegetarian">Vegetariano</span>}
+                    </h3>
+                    <p class="item-price">${item.price.toFixed(2)}</p>
+                  </div>
+                  <p class="item-description">{item.description}</p>
+                  <button class="add-to-cart-btn" data-item-id={item.id}>Añadir al Carrito</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </main>
+</Layout>
+
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const menuItems = document.querySelectorAll('.menu-item');
+    const searchInput = document.querySelector('.search-input');
+
+    // Función para aplicar filtros y búsqueda combinados
+    function applyFiltersAndSearch() {
+      const activeFilterButton = document.querySelector('.filter-btn.active');
+      const currentFilter = activeFilterButton ? activeFilterButton.dataset.filter : 'todos';
+      const searchTerm = searchInput.value.toLowerCase().trim();
+
+      menuItems.forEach(item => {
+        const itemName = item.dataset.name || '';
+        const itemDescription = item.dataset.description || '';
+        
+        let matchesFilter = false;
+        if (currentFilter === 'todos') {
+          matchesFilter = true;
+        } else {
+          matchesFilter = item.classList.contains(currentFilter);
+        }
+
+        let matchesSearch = true;
+        if (searchTerm) {
+          matchesSearch = itemName.includes(searchTerm) || itemDescription.includes(searchTerm);
+        }
+
+        if (matchesFilter && matchesSearch) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    // Event listeners para los botones de filtro
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Quitar clase 'active' de todos los botones
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        // Añadir clase 'active' al botón clickeado
+        button.classList.add('active');
+        applyFiltersAndSearch(); // Aplicar filtros y búsqueda
+      });
+    });
+
+    // Event listener para el input de búsqueda
+    searchInput.addEventListener('input', () => {
+      applyFiltersAndSearch(); // Aplicar filtros y búsqueda
+    });
+
+    // Aplicar filtro inicial al cargar la página (opcional, si quieres que "Todos" esté activo)
+    // applyFiltersAndSearch(); // Descomenta si quieres que se aplique al inicio
+
+    // --- Efectos Hover (opcional, si los quieres en JS en lugar de solo CSS) ---
+    // Estos efectos ya están manejados por CSS (:hover), pero si necesitas
+    // lógica más compleja, podrías hacerlo aquí.
+    // Por simplicidad, mantendremos los efectos hover en CSS.
+
+    // Ejemplo de cómo podrías añadir clases para los badges si no vienen del backend
+    // Esto es solo un ejemplo, ya que tus badges se renderizan condicionalmente en el HTML
+    /*
+    menuItems.forEach(item => {
+      const titleElement = item.querySelector('.item-title');
+      if (titleElement) {
+        if (item.querySelector('.badge.spicy')) {
+          item.classList.add('picantes');
+        }
+        if (item.querySelector('.badge.vegetarian')) {
+          item.classList.add('vegetarianos');
+        }
+        if (item.querySelector('.new-badge')) {
+          item.classList.add('nuevos');
+        }
+      }
+    });
+    */
+  });
+  // Combinamos el segundo DOMContentLoaded listener en el primero
+  document.addEventListener('DOMContentLoaded', () => {
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    const cartCountSpan = document.getElementById('cart-count');
+    const cartActionsDiv = document.querySelector('.cart-actions');
+
+    // Función para obtener el carrito de localStorage
+    function getCart() {
+      const cart = localStorage.getItem('restaurantCart');
+      return cart ? JSON.parse(cart) : [];
+    }
+
+    // Función para guardar el carrito en localStorage
+    function saveCart(cart) {
+      localStorage.setItem('restaurantCart', JSON.stringify(cart));
+      updateCartUI(); // Actualizar la UI del carrito cada vez que se guarda
+    }
+
+    // Función para actualizar la UI del carrito (contador y botón de limpiar)
+    function updateCartUI() {
+      const cart = getCart();
+      updateCartCount(cart);
+      updateClearCartButton(cart);
+    }
+
+    // Función para actualizar el contador visible del carrito
+    function updateCartCount(cart) {
+      // Si no se pasa el carrito, lo obtiene
+      if (!cart) {
+        cart = getCart();
+      }
+
+      // Si el carrito es null o undefined, inicializarlo como un array vacío
+      if (!cart) {
+        cart = [];
+      }
+      // Sumar las cantidades si estás guardando objetos { id, quantity }
+      // Si solo guardas IDs, usa cart.length
+      const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      cartCountSpan.textContent = totalItems;
+    }
+
+    // Event listeners para los botones "Añadir al Carrito"
+    addToCartButtons.forEach(button => button.addEventListener('click', () => {
+      const itemId = button.dataset.itemId;
+      const cart = getCart();
+      // Aquí podrías añadir lógica para incrementar cantidad si el ítem ya existe
+      cart.push({ id: parseInt(itemId), quantity: 1 }); // Guardamos como objeto { id, quantity }
+      saveCart(cart);
+      // Opcional: Mostrar un mensaje de confirmación al usuario
+      console.log(`Item ${itemId} added to cart`); // Para depuración
+    }));
+
+    // Función para crear y mostrar/ocultar el botón "Limpiar Carrito"
+    function updateClearCartButton(cart) {
+      let clearCartButton = cartActionsDiv.querySelector('#clear-cart-btn');
+
+      if (cart && cart.length > 0) {
+        if (!clearCartButton) {
+          clearCartButton = document.createElement('button');
+          clearCartButton.id = 'clear-cart-btn';
+          clearCartButton.textContent = 'Limpiar Carrito';
+          clearCartButton.classList.add('clear-cart-btn');
+          clearCartButton.addEventListener('click', clearCart);
+          cartActionsDiv.appendChild(clearCartButton);
+        }
+      } else if (clearCartButton) {
+        clearCartButton.remove();
+      }
+    }
+
+    // Función para limpiar el carrito
+    function clearCart() {
+      localStorage.removeItem('restaurantCart');
+      updateCartUI(); // Actualizar la UI después de limpiar
+      console.log('Cart cleared'); // Para depuración
+    }
+
+    // Inicializar el contador del carrito al cargar la página
+    updateCartUI();
+  });
+</script>
+
+<style> 
+
+.menu-wrapper { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+
+.menu-hero { background: linear-gradient(to right, #2c3e50, #3498db); color: white; text-align: center; padding: 3rem 2rem; margin-bottom: 1rem; }
+
+.menu-title { font-size: 3.5rem; font-weight: 700; margin-bottom: 1rem; }
+
+.menu-subtitle { font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+
+.menu-section { margin-bottom: 4rem; }
+
+.section-title { font-size: 2rem; color: #2c3e50; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #e9ecef; }
+
+.menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; padding: 1rem; }
+
+.menu-item { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+
+.menu-item:hover { transform: translateY(-5px); }
+
+.item-image-container { position: relative; height: 200px; }
+
+.item-image { width: 100%; height: 100%; object-fit: cover; }
+
+.item-content { padding: 1.5rem; }
+
+.item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+
+.item-title { font-size: 1.25rem; margin: 0; color: #2c3e50; }
+
+.item-price { font-size: 1.25rem; font-weight: 700; color: #e74c3c; margin: 0; }
+
+.item-description { color: #666; font-size: 0.95rem; line-height: 1.5; margin: 0; }
+
+.new-badge { position: absolute; top: 1rem; right: 1rem; background: #e74c3c; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+
+.badge { display: inline-block; padding: 0.25rem 0.5rem; margin-left: 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+
+.spicy { background: #ff7675; color: white; }
+
+.vegetarian { background: #00b894; color: white; }
+
+@media (max-width: 768px) { .menu-wrapper { padding: 1rem; }
+
+plaintext: 15 lines selected
+.menu-hero {
+  padding: 3rem 1rem;
+}
+
+.menu-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.menu-subtitle {
+  font-size: 1rem;
+}
+
+.menu-grid {
+  grid-template-columns: 1fr;
+}
+
+.section-title {
+  font-size: 1.75rem;
+}
+} /* Cierre de la media query @media (max-width: 768px) */
+
+/* Estilos generales para los botones (fuera de la media query) */
+
+.filter-buttons {
+    display: flex;
+    gap: 0.75rem; /* Espacio entre botones */
+    margin-bottom: 2rem; /* Espacio debajo de los botones */
+    flex-wrap: wrap; /* Para que los botones se ajusten en pantallas pequeñas */
+  }
+
+  .filter-btn {
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
+    color: #333;
+    border-radius: 20px; /* Bordes más redondeados */
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .filter-btn:hover {
+    background-color: #e9ecef;
+    border-color: #ccc;
+  }
+
+  .filter-btn.active {
+    background-color: #3498db; /* Color del hero para el botón activo */
+    color: white;
+    border-color: #3498db;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem; /* Espacio debajo del input de búsqueda */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  }
+
+  /* Estilos para el botón Añadir al Carrito */
+  .add-to-cart-btn {
+    display: block; /* Ocupa todo el ancho disponible */
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem; /* Espacio encima del botón */
+    background-color: #28a745; /* Un color verde para "añadir" */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  .add-to-cart-btn:hover {
+    background-color: #218838;
+  }
+
+  /* Estilos para las acciones del carrito y checkout */
+  .cart-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    margin-bottom: 2.5rem; /* Más espacio antes de que comiencen las secciones del menú */
+    border-top: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .cart-link {
+    display: inline-flex; /* Para alinear el ícono y el texto */
+    align-items: center;
+    text-decoration: none;
+    color: #2c3e50; /* Color oscuro principal */
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .cart-link:hover {
+    background-color: #f0f4f8; /* Un hover sutil */
+  }
+
+  .cart-icon {
+    margin-right: 0.75rem; /* Espacio entre el ícono y el texto */
+    stroke-width: 2; /* Grosor del ícono */
+  }
+  
+  .cart-text #cart-count {
+    font-weight: 700;
+    color: #3498db; /* Color del hero para el contador */
+  }
+
+  .checkout-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #e74c3c; /* Color de acento para pagar */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .checkout-btn:hover {
+    background-color: #c0392b; /* Un rojo más oscuro al pasar el mouse */
+    transform: translateY(-2px);
+  }
+  .checkout-arrow-icon {
+    margin-left: 0.5rem;
+  }
+
+  .clear-cart-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #d9534f; /* Un rojo diferente para "limpiar" */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-left: 0.5rem;
+  }
+
+  .clear-cart-btn:hover {
+    background-color: #c9302c; /* Rojo más oscuro para hover */
+    transform: translateY(-2px);
+  }
+</style>
