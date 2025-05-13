@@ -2,6 +2,7 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+
 // Crear instancia de Sequelize (con "e", no con "a") con parámetros desde variables de entorno
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,

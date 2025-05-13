@@ -1,6 +1,9 @@
 // Constantes de dependencias
 const express = require('express');
 const dotenv = require('dotenv');
+// Cargar variables de entorno lo antes posible
+dotenv.config();
+
 const cors = require('cors');
 // Colors para estilizar
 const colors = require('./colors/theme.js');
@@ -10,7 +13,6 @@ const { syncModels } = require('./models');
 // Importar rutas
 const rutas = require('./routes/index');
 
-dotenv.config();
 const app = express();
 
 //Middleware
@@ -74,6 +76,7 @@ const iniciarServidor = async () => {
             await syncModels();
             app.listen(PORT , () =>{
                 console.log(`✅ Servidor corriendo en el puerto ${PORT}`.success);
+
             });
         } else {
             console.log('No se pudo iniciar el servidor debido a la db'.failed)
