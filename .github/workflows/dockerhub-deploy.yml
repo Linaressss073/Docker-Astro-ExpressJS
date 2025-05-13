@@ -31,7 +31,7 @@ jobs:
           push: true
           tags: alejandrorojas073/astro-frontend:latest
 
-      - name: Build and push Backend (Express/Nest)
+      - name: Build and push Backend (Express)
         uses: docker/build-push-action@v5
         with:
           context: ./backend
