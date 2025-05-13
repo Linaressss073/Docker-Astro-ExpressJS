@@ -1,389 +1,820 @@
 ---
-// Importaciones necesarias
-import HotelLayout from '../layouts/HotelLayout.astro';
+import Layout from '../layouts/Page.astro';
 import AnnouncementBar from '../components/AnnouncementBar.astro';
+import { Image } from 'astro:assets';
 
+// Importa tus imágenes desde la carpeta src/assets/
+import room1Image from '../../src/rooms/room1.jpg';
+import room2Image from '../../src/rooms/room2.jpg';
+import room3Image from '../../src/rooms/room3.jpg';
+import room4Image from '../../src/rooms/room4.jpg';
 
-import Logo from '../components/Logo.astro';
-
-// Datos de ejemplo para las habitaciones (en un proyecto real probablemente vendrían de una API o CMS)
-const rooms = [
+const initialRooms = [
   {
-    id: 1,
-    name: "Deluxe Room",
-    description: "Una habitación elegante con diseño moderno, ideal para parejas que buscan confort. Incluye una cama King, baño privado con acabados de lujo, WiFi de alta velocidad y desayuno incluido.",
-    price: 120,
-    oldPrice: 150,
-    capacity: 2,
-    bed: "King Beds",
-    services: ["Breakfast", "Bathroom", "WiFi", "TV"],
-    image: "/images/rooms/room1.jpg",
-    stars: 5
+    "id": 1,
+    "name": "Suite Presidencial",
+    "description": "La cúspide del lujo. Amplia suite con vistas panorámicas, cama King extragrande, sala de estar independiente, comedor, cocina equipada y baño de mármol con jacuzzi.",
+    "price": 350,
+    "oldPrice": 450,
+    "capacity": 4,
+    "bed": "King XL Bed",
+    "services": ["Desayuno Gourmet", "Baño Privado con Jacuzzi", "WiFi de Alta Velocidad", "TV de Pantalla Plana 65\"", "Minibar Premium", "Servicio de Mayordomo"],
+    "image": room1Image,
+    "stars": 5,
+    "type": "Luxury Suite"
   },
   {
-    id: 2,
-    name: "Double Room",
-    description: "Perfecta para amigos o parejas, esta habitación ofrece dos camas dobles, un ambiente acogedor y servicios esenciales como TV, WiFi gratuito y baño completo.",
-    price: 90,
-    oldPrice: 110,
-    capacity: 2,
-    bed: "Double Beds",
-    services: ["Breakfast", "Bathroom", "WiFi", "TV"],
-    image: "/images/rooms/room2.jpg",
-    stars: 4
+    "id": 2,
+    "name": "Habitación Doble Superior",
+    "description": "Confort y estilo para tu estancia. Dos camas Queen, balcón privado con vistas a la ciudad, baño moderno y todas las comodidades esenciales.",
+    "price": 110,
+    "oldPrice": 130,
+    "capacity": 2,
+    "bed": "Queen Beds",
+    "services": ["Desayuno", "Baño Privado", "WiFi Gratuito", "TV de Pantalla Plana", "Balcón"],
+    "image": room2Image,
+    "stars": 4,
+    "type": "Superior"
   },
   {
-    id: 3,
-    name: "Suite Room",
-    description: "Nuestra suite combina lujo y amplitud. Disfruta de camas King y Queen, minibar, baño privado con jacuzzi, sala de estar separada y atención personalizada las 24 horas.",
-    price: 200,
-    oldPrice: 250,
-    capacity: 4,
-    bed: "King & Queen Beds",
-    services: ["Breakfast", "Private Bathroom", "WiFi", "TV", "Mini Bar"],
-    image: "/images/rooms/room3.jpg",
-    stars: 5
+    "id": 3,
+    "name": "Estudio con Cocina",
+    "description": "Ideal para estancias prolongadas. Funcional estudio con cama King, área de trabajo, cocina americana totalmente equipada y baño completo.",
+    "price": 100,
+    "oldPrice": null,
+    "capacity": 2,
+    "bed": "King Bed",
+    "services": ["Baño Privado", "WiFi", "TV", "Cocina Equipada", "Lavandería"],
+    "image": room3Image,
+    "stars": 3,
+    "type": "Apartment"
   },
   {
-    id: 4,
-    name: "Family Room",
-    description: "Espacio ideal para familias numerosas, equipada con varias camas, aire acondicionado, área de descanso, WiFi, y televisión por cable. Comodidad y funcionalidad para todos.",
-    price: 150,
-    oldPrice: 180,
-    capacity: 6,
-    bed: "Multiple Beds",
-    services: ["Breakfast", "Bathroom", "WiFi", "TV", "Air Conditioning"],
-    image: "/images/rooms/room4.jpg",
-    stars: 4
+    "id": 4,
+    "name": "Habitación Familiar Conectada",
+    "description": "Perfecta para familias. Dos habitaciones conectadas, una con cama King y otra con dos camas individuales, dos baños y espacio para todos.",
+    "price": 180,
+    "oldPrice": 220,
+    "capacity": 4,
+    "bed": "King Bed & Twin Beds",
+    "services": ["Desayuno", "Dos Baños", "WiFi", "TV en cada habitación", "Aire Acondicionado"],
+    "image": room4Image,
+    "stars": 4,
+    "type": "Family"
+  },
+  {
+    "id": 5,
+    "name": "Suite Junior con Terraza",
+    "description": "Disfruta del aire fresco en nuestra Junior Suite. Cama King, sala de estar pequeña y una amplia terraza privada con mobiliario exterior.",
+    "price": 160,
+    "oldPrice": 190,
+    "capacity": 2,
+    "bed": "King Bed",
+    "services": ["Desayuno", "Baño Privado", "WiFi", "Smart TV", "Terraza Privada"],
+    "image": room1Image,
+    "stars": 4,
+    "type": "Suite"
+  },
+  {
+    "id": 6,
+    "name": "Habitación Individual Económica",
+    "description": "Una opción práctica y cómoda para viajeros solitarios. Cama individual, baño privado y servicios básicos incluidos.",
+    "price": 70,
+    "oldPrice": 85,
+    "capacity": 1,
+    "bed": "Single Bed",
+    "services": ["Baño Privado", "WiFi", "TV"],
+    "image": room2Image,
+    "stars": 3,
+    "type": "Economy"
+  },
+  {
+    "id": 7,
+    "name": "Doble con Vistas al Mar",
+    "description": "Despiértate con el sonido de las olas. Habitación doble con cama Queen y espectaculares vistas panorámicas al océano.",
+    "price": 140,
+    "oldPrice": 170,
+    "capacity": 2,
+    "bed": "Queen Bed",
+    "services": ["Desayuno", "Baño Privado", "WiFi", "TV", "Vistas al Mar"],
+    "image": room3Image,
+    "stars": 5,
+    "type": "Premium"
+  },
+  {
+    "id": 8,
+    "name": "Suite Ático",
+    "description": "Exclusiva suite en el último piso. Cama King, sala de estar de doble altura, balcón envolvente con vistas de 360 grados y detalles de diseño únicos.",
+    "price": 280,
+    "oldPrice": 330,
+    "capacity": 2,
+    "bed": "King Bed",
+    "services": ["Desayuno Exclusivo", "Baño de Lujo", "WiFi de Alta Velocidad", "Smart TV 70\"", "Minibar", "Balcón Panorámico"],
+    "image": room4Image,
+    "stars": 5,
+    "type": "Penthouse"
   }
 ];
 
-// Props del componente
-const { title = "Nuestras Habitaciones" } = Astro.props;
+// Eliminar duplicados y agregar tipos a cada habitación
+const rooms = Array.from(new Set(initialRooms.map(room => room.id)))
+  .map(id => initialRooms.find(room => room.id === id));
 
-// SEO props
-
+// Filtros disponibles
+const roomTypes = [...new Set(rooms.map(room => room.type))];
+const capacities = [...new Set(rooms.map(room => room.capacity))].sort((a, b) => a - b);
+const minPrice = Math.min(...rooms.map(room => room.price));
+const maxPrice = Math.max(...rooms.map(room => room.price));
 ---
 
-<HotelLayout>
-    <div class="full-page-split__logo">
-        <a href="/">
-          <Logo />
-        </a>
-      </div>
-    <AnnouncementBar slot="announcement-bar" />
-    
-    <!-- Sección principal de lista de habitaciones -->
-    <section class="room-list">
-        <div class="container">
-            <div class="row">
-                <!-- Sidebar de búsqueda -->
-                <div class="col-lg-3">
-                    <div class="sidebar">
-                        <div class="sidebar-item mb-4">
-                            <h4>Buscar Habitación</h4>
-                            <div class="sidebar-content">
-                                <form>
-                                    <div class="form-group mb-3">
-                                        <label>Check-in</label>
-                                        <input type="date" class="form-control" />
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label>Check-out</label>
-                                        <input type="date" class="form-control" />
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label>Adultos</label>
-                                        <select class="form-select">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label>Niños</label>
-                                        <select class="form-select">
-                                            <option value="0">0</option>
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label>Categoría</label>
-                                        <select class="form-select">
-                                            <option value="">Todas las categorías</option>
-                                            <option value="deluxe">Deluxe</option>
-                                            <option value="double">Double</option>
-                                            <option value="suite">Suite</option>
-                                            <option value="family">Family</option>
-                                        </select>
-                                    </div>
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary">Buscar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        
-                        <div class="sidebar-item mb-4">
-                            <h4>Rango de Precio</h4>
-                            <div class="sidebar-content">
-                                <div class="range-slider">
-                                    <input type="range" min="0" max="500" value="100" class="slider" id="priceRange">
-                                    <div class="d-flex justify-content-between mt-2">
-                                        <span>$0</span>
-                                        <span id="priceValue">$100</span>
-                                        <span>$500</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="sidebar-item">
-                            <h4>Servicios Populares</h4>
-                            <div class="sidebar-content">
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="wifi">
-                                    <label class="form-check-label" for="wifi">WiFi</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="breakfast">
-                                    <label class="form-check-label" for="breakfast">Desayuno</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="pool">
-                                    <label class="form-check-label" for="pool">Piscina</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="ac">
-                                    <label class="form-check-label" for="ac">Aire Acondicionado</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="gym">
-                                    <label class="form-check-label" for="gym">Gimnasio</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Lista de habitaciones -->
-                <div class="col-lg-9">
-                    <!-- Filtros superiores -->
-                    <div class="list-results d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h4>Mostrando 1-{rooms.length} de {rooms.length} resultados</h4>
-                        </div>
-                        <div class="list-sort">
-                            <select class="form-select">
-                                <option value="popular">Popularidad</option>
-                                <option value="price-low">Precio: De menor a mayor</option>
-                                <option value="price-high">Precio: De mayor a menor</option>
-                                <option value="rating">Calificación</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Tarjetas de habitaciones -->
-                    {rooms.map((room) => (
-                        <div class="room-item mb-4">
-                            <div class="row g-0 border rounded overflow-hidden shadow-sm">
-                                <div class="col-md-4">
-                                    <img src={room.image} alt={room.name} class="img-fluid h-100 object-fit-cover w-100" />
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <h3 class="card-title mb-0">{room.name}</h3>
-                                            <div class="price-box">
-                                                <span class="price">${room.price}</span>
-                                                <span class="old-price">${room.oldPrice}</span>
-                                                <span class="per-night">/ Noche</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="rating mb-3">
-                                            {Array(5).fill(0).map((_, i) => (
-                                                <i class={`fa fa-star ${i < room.stars ? 'text-warning' : 'text-muted'}`}></i>
-                                            ))}
-                                        </div>
-                                        
-                                        <p class="card-text">{room.description}</p>
-                                        
-                                        <div class="room-services d-flex flex-wrap mb-3">
-                                            <span class="service-item me-3 mb-2">
-                                                <i class="fa fa-user"></i> {room.capacity} Personas
-                                            </span>
-                                            <span class="service-item me-3 mb-2">
-                                                <i class="fa fa-bed"></i> {room.bed}
-                                            </span>
-                                            {room.services.map((service) => (
-                                                <span class="service-item me-3 mb-2">
-                                                    <i class="fa fa-check"></i> {service}
-                                                </span>
-                                            ))}
-                                        </div>
-                                        
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <a href={`/room/${room.id}`} class="btn btn-outline-secondary">Ver Detalles</a>
-                                            <a href={`/booking/${room.id}`} class="btn btn-primary">Reservar Ahora</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                    
-                    <!-- Paginación -->
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center mt-5">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Siguiente</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+<Layout>
+  <AnnouncementBar slot="announcement-bar" />
+
+  <div class="rooms-hero">
+    <div class="container">
+      <h1 class="rooms-title">Nuestras Habitaciones</h1>
+      <p class="rooms-subtitle">Explore nuestra variedad de habitaciones y suites de lujo diseñadas para su máxima comodidad</p>
+    </div>
+  </div>
+
+  <section class="container my-5">
+    <div class="rooms-container">
+      <!-- Sidebar de Filtros (Izquierda) -->
+      <aside class="filters-sidebar">
+        <div class="filters-container">
+          <h5 class="filter-title">Filtrar Habitaciones</h5>
+          
+          <div class="filter-group">
+            <label for="room-type">Tipo de Habitación</label>
+            <select id="room-type" class="form-select">
+              <option value="all">Todos los tipos</option>
+              {roomTypes.map((type) => (
+                <option value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="capacity">Capacidad</label>
+            <select id="capacity" class="form-select">
+              <option value="all">Cualquier capacidad</option>
+              {capacities.map((cap) => (
+                <option value={cap}>{cap} {cap === 1 ? 'Persona' : 'Personas'}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="price-range">Rango de Precio</label>
+            <div class="price-inputs">
+              <div class="price-slider-container">
+                <input
+                  type="range"
+                  id="price-range"
+                  class="form-range price-slider"
+                  min={minPrice}
+                  max={maxPrice}
+                  value={maxPrice}
+                />
+              </div>
+              <div class="price-values">
+                <span id="price-min-value">$<span id="current-min">{minPrice}</span></span>
+                <span id="price-max-value">$<span id="current-max">{maxPrice}</span></span>
+              </div>
             </div>
+          </div>
+          
+          <div class="filter-group">
+            <label class="services-label">Servicios</label>
+            <div class="services-checkboxes">
+              <div class="form-check service-check">
+                <input class="form-check-input" type="checkbox" value="WiFi" id="wifi-check">
+                <label class="form-check-label" for="wifi-check">
+                  <i class="fas fa-wifi service-icon"></i>WiFi
+                </label>
+              </div>
+              <div class="form-check service-check">
+                <input class="form-check-input" type="checkbox" value="Breakfast" id="breakfast-check">
+                <label class="form-check-label" for="breakfast-check">
+                  <i class="fas fa-coffee service-icon"></i>Desayuno
+                </label>
+              </div>
+              <div class="form-check service-check">
+                <input class="form-check-input" type="checkbox" value="Air Conditioning" id="ac-check">
+                <label class="form-check-label" for="ac-check">
+                  <i class="fas fa-wind service-icon"></i>Aire Acondicionado
+                </label>
+              </div>
+              <div class="form-check service-check">
+                <input class="form-check-input" type="checkbox" value="Mini Bar" id="minibar-check">
+                <label class="form-check-label" for="minibar-check">
+                  <i class="fas fa-glass-martini-alt service-icon"></i>Mini Bar
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-actions">
+            <button id="apply-filters" class="btn btn-primary btn-sm">Aplicar Filtros</button>
+            <button id="clear-filters" class="btn btn-outline-secondary btn-sm">Limpiar Filtros</button>
+          </div>
         </div>
-    </section>
-    
-</HotelLayout>
+      </aside>
+
+      <!-- Contenido Principal (Derecha) -->
+      <div class="rooms-content">
+        <!-- Resultados y ordenación -->
+        <div class="results-header">
+          <div class="results-info">
+            <p id="results-count"><span>{rooms.length}</span> habitaciones encontradas</p>
+            <button id="reset-search" class="reset-button">
+              <i class="fas fa-redo-alt"></i> Reiniciar búsqueda
+            </button>
+          </div>
+          <div class="sorting">
+            <label for="sort-by">Ordenar por:</label>
+            <select id="sort-by" class="form-select">
+              <option value="price-asc">Precio: Menor a Mayor</option>
+              <option value="price-desc">Precio: Mayor a Menor</option>
+              <option value="capacity-asc">Capacidad: Menor a Mayor</option>
+              <option value="capacity-desc">Capacidad: Mayor a Menor</option>
+              <option value="stars-desc">Calificación: Mayor a Menor</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cuadrícula de habitaciones -->
+        <div class="rooms-grid">
+          {rooms.map((room) => (
+            <div class="room-card" data-type={room.type} data-capacity={room.capacity} data-price={room.price} data-services={room.services.join(',')}>
+              <div class="card h-100">
+                <div class="card-image-container">
+                  <Image src={room.image} class="card-img-top" alt={room.name} widths={[250, 500, 750]} sizes="(max-width: 768px) 100vw, (max-width: 992px) 50vw, 33vw" />
+                  
+                  <div class="room-type-tag">
+                    {room.type}
+                  </div>
+                  
+                  {room.oldPrice && (
+                    <div class="discount-badge">
+                      {Math.round(((room.oldPrice - room.price) / room.oldPrice) * 100)}% OFF
+                    </div>
+                  )}
+                  
+                  <div class="price-tag">
+                    <div class="current-price">${room.price}</div>
+                    {room.oldPrice && (
+                      <div class="old-price">${room.oldPrice}</div>
+                    )}
+                    <div class="per-night">/ noche</div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">{room.name}</h5>
+                  
+                  <div class="stars">
+                    {Array(5).fill(0).map((_, i) => (
+                      <i class={`fas fa-star ${i < room.stars ? 'active' : ''}`}></i>
+                    ))}
+                  </div>
+                  
+                  <p class="card-text">{room.description}</p>
+                  
+                  <div class="room-details">
+                    <div class="detail-item">
+                      <i class="fas fa-user"></i>
+                      <span>{room.capacity} {room.capacity === 1 ? 'Persona' : 'Personas'}</span>
+                    </div>
+                    <div class="detail-item">
+                      <i class="fas fa-bed"></i>
+                      <span>{room.bed}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="services">
+                    {room.services.slice(0, 4).map((service) => (
+                      <span class="service-badge">
+                        <i class="fas fa-check"></i>{service}
+                      </span>
+                    ))}
+                    {room.services.length > 4 && (
+                      <span class="service-badge more-services">
+                        +{room.services.length - 4} más
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div class="card-buttons">
+                    <a href={`/room/${room.id}`} class="btn btn-outline">Ver Detalles</a>
+                    <a href={`/booking/${room.id}`} class="btn btn-primary">Reservar Ahora</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
 
 <script>
-// Script para actualizar el valor del rango de precio
-document.addEventListener('DOMContentLoaded', function() {
-    const priceRange = document.getElementById('priceRange');
-    const priceValue = document.getElementById('priceValue');
+  // Función para filtrar las habitaciones
+  function filterRooms() {
+    const typeFilter = document.getElementById('room-type').value;
+    const capacityFilter = document.getElementById('capacity').value;
+    const priceFilter = document.getElementById('price-range').value;
     
-    if (priceRange && priceValue) {
-        priceRange.addEventListener('input', function() {
-            priceValue.textContent = '$' + (this as HTMLInputElement).value;
-        });
+    // Obtener servicios seleccionados
+    const selectedServices = Array.from(document.querySelectorAll('.services-checkboxes input:checked'))
+      .map(checkbox => checkbox.value);
+    
+    // Filtrar las habitaciones
+    const rooms = document.querySelectorAll('.room-card');
+    let visibleCount = 0;
+    
+    rooms.forEach(room => {
+      const roomType = room.dataset.type;
+      const roomCapacity = parseInt(room.dataset.capacity);
+      const roomPrice = parseInt(room.dataset.price);
+      const roomServices = room.dataset.services.split(',');
+      
+      // Aplicar filtros
+      let visible = true;
+      
+      // Filtro de tipo
+      if (typeFilter !== 'all' && roomType !== typeFilter) {
+        visible = false;
+      }
+      
+      // Filtro de capacidad
+      if (capacityFilter !== 'all' && roomCapacity !== parseInt(capacityFilter)) {
+        visible = false;
+      }
+      
+      // Filtro de precio máximo
+      if (roomPrice > parseInt(priceFilter)) {
+        visible = false;
+      }
+      
+      // Filtro de servicios (debe tener todos los servicios seleccionados)
+      if (selectedServices.length > 0) {
+        const hasAllServices = selectedServices.every(service => roomServices.includes(service));
+        if (!hasAllServices) {
+          visible = false;
+        }
+      }
+      
+      // Mostrar u ocultar la habitación
+      if (visible) {
+        room.classList.remove('d-none');
+        visibleCount++;
+      } else {
+        room.classList.add('d-none');
+      }
+    });
+    
+    // Actualizar contador de resultados
+    document.querySelector('#results-count span').textContent = visibleCount;
+    
+    // Mostrar mensaje de sin resultados si es necesario
+    const noResults = document.getElementById('no-results');
+    if (visibleCount === 0) {
+      noResults.classList.remove('d-none');
+    } else {
+      noResults.classList.add('d-none');
     }
-});
+  }
+  
+  // Función para ordenar las habitaciones
+  function sortRooms() {
+    const sortBy = document.getElementById('sort-by').value;
+    const roomsContainer = document.querySelector('.rooms-grid');
+    const rooms = Array.from(document.querySelectorAll('.room-card'));
+    
+    rooms.sort((a, b) => {
+      const priceA = parseInt(a.dataset.price);
+      const priceB = parseInt(b.dataset.price);
+      const capacityA = parseInt(a.dataset.capacity);
+      const capacityB = parseInt(b.dataset.capacity);
+      const starsA = a.querySelector('.stars').querySelectorAll('.active').length;
+      const starsB = b.querySelector('.stars').querySelectorAll('.active').length;
+      
+      switch (sortBy) {
+        case 'price-asc':
+          return priceA - priceB;
+        case 'price-desc':
+          return priceB - priceA;
+        case 'capacity-asc':
+          return capacityA - capacityB;
+        case 'capacity-desc':
+          return capacityB - capacityA;
+        case 'stars-desc':
+          return starsB - starsA;
+        default:
+          return 0;
+      }
+    });
+    
+    // Reordenar elementos en el DOM
+    rooms.forEach(room => roomsContainer.appendChild(room));
+  }
+  
+  // Actualizar los valores del precio mostrados
+  function updatePriceLabels() {
+    const priceRange = document.getElementById('price-range');
+    const currentMax = document.getElementById('current-max');
+    
+    currentMax.textContent = priceRange.value;
+  }
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar event listeners
+    document.getElementById('apply-filters').addEventListener('click', function() {
+      filterRooms();
+    });
+    
+    document.getElementById('clear-filters').addEventListener('click', function() {
+      // Resetear filtros
+      document.getElementById('room-type').value = 'all';
+      document.getElementById('capacity').value = 'all';
+      document.getElementById('price-range').value = document.getElementById('price-range').max;
+      
+      const checkboxes = document.querySelectorAll('.services-checkboxes input');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      
+      // Actualizar la etiqueta de precio
+      updatePriceLabels();
+      
+      // Recargar filtros
+      filterRooms();
+    });
+    
+    document.getElementById('sort-by').addEventListener('change', sortRooms);
+    
+    document.getElementById('price-range').addEventListener('input', function() {
+      updatePriceLabels();
+    });
+    
+    document.getElementById('reset-search').addEventListener('click', function() {
+      document.getElementById('clear-filters').click();
+    });
+    
+    // Hacer que el filtro se aplique automáticamente cuando cambie un valor
+    document.getElementById('room-type').addEventListener('change', filterRooms);
+    document.getElementById('capacity').addEventListener('change', filterRooms);
+    document.getElementById('price-range').addEventListener('change', filterRooms);
+    
+    document.querySelectorAll('.services-checkboxes input').forEach(checkbox => {
+      checkbox.addEventListener('change', filterRooms);
+    });
+    
+    // Inicializar filtros
+    updatePriceLabels();
+  });
 </script>
 
 <style>
-/* Estilos específicos para esta página */
-
-.full-page-split__wrapper {
-    display: grid;
-    grid-template-columns: 4fr 4fr;
-    min-height: 100vh;
-  }
-  .full-page-split__image-section {
-    position: relative;
-  }
-  .full-page-split__image-section :global(img) {
-    width: 100%;
-    height: 100vh;
-    object-fit: cover;
-  }
-  .full-page-split__logo {
-    background-color: var(--theme-surface-1);
-    color: var(--theme-on-surface-1);
-    padding: 0.5rem 1rem;
-    border-radius: var(--theme-shape-radius);
-    top: 1rem;
-    left: 1rem;
-    position: absolute;
-    z-index: 1;
-  }
-  .full-page-split__content-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .full-page-split__content-container {
-    margin: 1rem;
-    padding: 2rem;
-    background-color: var(--theme-surface-1);
-    color: var(--theme-on-surface-1);
-    border-radius: var(--theme-shape-radius);
-  }
-  .full-page-split__content-container h1 {
-    font-size: var(--font-size-xl);
-  }
-
-.sidebar-item {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 5px;
+/* Estilos para la sección hero */
+.rooms-hero {
+  background: linear-gradient(to right, #0a2342, #126e82);
+  color: white;
+  padding: 3rem 0;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
-.sidebar-item h4 {
-    margin-bottom: 15px;
-    font-size: 20px;
-    position: relative;
-    padding-bottom: 10px;
+.rooms-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
-.sidebar-item h4:after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 50px;
-    height: 2px;
-    background: #0d6efd;
+.rooms-subtitle {
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+  opacity: 0.9;
 }
 
-.price-box {
-    text-align: right;
+/* Contenedor de página con layout de dos columnas */
+.rooms-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
 }
 
-.price {
-    font-size: 24px;
-    font-weight: 700;
-    color: #0d6efd;
+/* Sidebar de filtros a la izquierda */
+.filters-sidebar {
+  position: sticky;
+  top: 100px; /* Ajusta según la altura de tu navbar */
+  height: fit-content;
 }
 
-.old-price {
-    font-size: 16px;
-    text-decoration: line-through;
-    color: #888;
-    margin-left: 5px;
+.filters-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  border: 1px solid #f0f0f0;
 }
 
-.per-night {
-    font-size: 14px;
-    color: #888;
+.filter-title {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e9ecef;
+  font-weight: 600;
+  color: #333;
+  font-size: 1.2rem;
 }
 
-.service-item {
-    font-size: 14px;
+.filter-group {
+  margin-bottom: 1.75rem;
 }
 
-.service-item i {
-    margin-right: 5px;
-    color: #0d6efd;
+.filter-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  color: #555;
+  font-size: 0.95rem;
 }
 
-/* Estilo responsivo */
-@media (max-width: 767px) {
-    .sidebar {
-        margin-bottom: 30px;
-    }
-    
-    .room-item .card-body {
-        padding: 20px;
-    }
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #dde2e5;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  box-shadow: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Estilos para compatibilidad con Odyssey Theme */
-:root {
-    scroll-behavior: smooth;
+.form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
 }
 
-#content {
-    min-height: 70vh;
+.price-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
-</style>
+
+.price-slider-container {
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+.price-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 5px;
+  background: #e9ecef;
+  outline: none;
+}
+
+.price-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.price-slider::-webkit-slider-thumb:hover {
+  background: #0056b3;
+}
+
+.price-values {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  color: #666;
+}
+
+.services-label {
+  margin-bottom: 1rem;
+}
+
+.services-checkboxes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.service-check {
+  margin: 0;
+}
+
+.form-check-input {
+  width: 18px;
+  height: 18px;
+  margin-top: 0.2rem;
+  cursor: pointer;
+}
+
+.form-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.service-icon {
+  color: #007bff;
+  font-size: 0.85rem;
+  width: 16px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  flex: 1;
+  display: inline-block;
+  padding: 0.7rem 1rem;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: #fff;
+  border: 1px solid #007bff;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+.btn-outline-secondary {
+  border: 1px solid #ced4da;
+  color: #6c757d;
+  background: transparent;
+}
+
+.btn-outline-secondary:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+}
+
+/* Contenido principal a la derecha */
+.rooms-content {
+  width: 100%;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.results-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#results-count {
+  margin: 0;
+  font-weight: 500;
+  color: #333;
+}
+
+#results-count span {
+  font-weight: 700;
+  color: #007bff;
+}
+
+.reset-button {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.reset-button:hover {
+  color: #0056b3;
+  background: #f8f9fa;
+}
+
+.sorting {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sorting label {
+  margin: 0;
+  font-weight: 500;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.sorting select {
+  width: auto;
+  min-width: 180px;
+}
+
+/* Mensaje de sin resultados */
+.no-results-message {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.no-results-content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.no-results-icon {
+  font-size: 3rem;
+  color: #adb5bd;
+  margin-bottom: 1rem;
+}
+
+.no-results-message h3 {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #495057;
+}
+
+.no-results-message p {
+  color: #6c757d;
+}
+
+/* Cuadrícula de habitaciones */
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.card-image-container {
+  position: relative;
+  overflow: hidden;
+  height: 220px;
+}
+
+.card-img-top {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.6s ease;
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.08);
+}
+
+.room-type-tag {
+  position: absolute
+
+<style>

@@ -22,6 +22,16 @@ const { seo } = Astro.props as Props;
     <div id="page">
         <slot />
     </div>
+
+   <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+		<df-messenger
+		intent="WELCOME"
+		chat-title="ChatBot"
+		agent-id="8c4bff09-88ec-459d-ac06-5f4d6c8ce09a"
+		language-code="es"
+		>
+	</df-messenger>
+
     <Footer
         slot="footer"
         background="var(--theme-surface-1)"
@@ -33,16 +43,8 @@ const { seo } = Astro.props as Props;
         <Logo slot="logo" />
     </Footer>
 
-    <!-- Dialogflow Messenger Chatbot -->
-    <df-messenger
-        intent="WELCOME"
-        chat-title="ChatbotPrueba"
-        agent-id="cb9eb1b3-9cd4-4882-bcf7-dc2b9c7e02a8"
-        language-code="es">
-    </df-messenger>
+    
 
-    <!-- Script de Dialogflow Messenger -->
-    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 </Layout>
 
 <style is:global>
