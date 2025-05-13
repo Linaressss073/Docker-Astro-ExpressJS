@@ -1,10 +1,12 @@
+version: '3.8'
+
 services:
-  # Frontend (Astro)
   frontend:
     container_name: astro-app
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: alejandrorojas073/astro-frontend:latest
     ports:
       - "4321:4321"
     volumes:
@@ -15,12 +17,12 @@ services:
     networks:
       - app-network
 
-  # Backend (NestJS o Express)
   backend:
     container_name: express-api
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: alejandrorojas073/express-backend:latest
     ports:
       - "3001:3001"
     volumes:
@@ -41,7 +43,6 @@ services:
     networks:
       - app-network
 
-      
   postgres:
     image: postgres:15-alpine
     container_name: postgres-db
@@ -61,9 +62,6 @@ services:
     networks:
       - app-network
 
-
-
-  # pgAdmin
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
