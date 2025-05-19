@@ -1,0 +1,688 @@
+---
+import Layout from '../../layouts/Page.astro';
+import AnnouncementBar from '../../components/AnnouncementBar.astro'
+import { Image } from 'astro:assets';
+
+// Obtener el ID de la habitación de los parámetros
+const { id } = Astro.params;
+
+// Importar imágenes (mantenemos la misma estructura que la página principal)
+import room1Image from '../../../src/rooms/room1.jpg';
+import room2Image from '../../../src/rooms/room2.jpg';
+import room3Image from '../../../src/rooms/room3.jpg';
+import room4Image from '../../../src/rooms/room4.jpg';
+import room5Image from '../../../src/rooms/room5.jpg';
+import room6Image from '../../../src/rooms/room6.jpg';
+
+// Datos de ejemplo como respaldo en caso de que la API falle
+const initialRooms = [
+  {
+    "id": 1,
+    "name": "Suite Presidencial",
+    "description": "La cúspide del lujo. Amplia suite con vistas panorámicas, cama King extragrande, sala de estar independiente, comedor, cocina equipada y baño de mármol con jacuzzi.",
+    "price": 350,
+    "oldPrice": 450,
+    "capacity": 4,
+    "bed": "King XL Bed",
+    "services": ["Desayuno Gourmet", "Baño Privado con Jacuzzi", "WiFi de Alta Velocidad", "TV de Pantalla Plana 65\"", "Minibar Premium", "Servicio de Mayordomo"],
+    "image": room1Image,
+    "stars": 5,
+    "type": "Luxury Suite"
+  },
+  {
+    "id": 2,
+    "name": "Habitación Doble Superior",
+    "description": "Confort y estilo para tu estancia. Dos camas Queen, balcón privado con vistas a la ciudad, baño moderno y todas las comodidades esenciales.",
+    "price": 110,
+    "oldPrice": 130,
+    "capacity": 2,
+    "bed": "Queen Beds",
+    "services": ["Desayuno", "Baño Privado", "WiFi Gratuito", "TV de Pantalla Plana", "Balcón"],
+    "image": room2Image,
+    "stars": 4,
+    "type": "Superior"
+  },
+  {
+    "id": 3,
+    "name": "Estudio con Cocina",
+    "description": "Ideal para estancias prolongadas. Funcional estudio con cama King, área de trabajo, cocina americana totalmente equipada y baño completo.",
+    "price": 100,
+    "oldPrice": null,
+    "capacity": 2,
+    "bed": "King Bed",
+    "services": ["Baño Privado", "WiFi", "TV", "Cocina Equipada", "Lavandería"],
+    "image": room3Image,
+    "stars": 3,
+    "type": "Apartment"
+  },
+  {
+    "id": 4,
+    "name": "Habitación Familiar Conectada",
+    "description": "Perfecta para familias. Dos habitaciones conectadas, una con cama King y otra con dos camas individuales, dos baños y espacio para todos.",
+    "price": 180,
+    "oldPrice": 220,
+    "capacity": 4,
+    "bed": "King Bed & Twin Beds",
+    "services": ["Desayuno", "Dos Baños", "WiFi", "TV en cada habitación", "Aire Acondicionado"],
+    "image": room3Image,
+    "stars": 4,
+    "type": "Family"
+  },
+  {
+    "id": 5,
+    "name": "Suite Junior con Terraza",
+    "description": "Disfruta del aire fresco en nuestra Junior Suite. Cama King, sala de estar pequeña y una amplia terraza privada con mobiliario exterior.",
+    "price": 160,
+    "oldPrice": 190,
+    "capacity": 2,
+    "bed": "King Bed",
+    "services": ["Desayuno", "Baño Privado", "WiFi", "Smart TV", "Terraza Privada"],
+    "image": room1Image,
+    "stars": 4,
+    "type": "Suite"
+  },
+  {
+    "id": 6,
+    "name": "Habitación Individual Económica",
+    "description": "Una opción práctica y cómoda para viajeros solitarios. Cama individual, baño privado y servicios básicos incluidos.",
+    "price": 70,
+    "oldPrice": 85,
+    "capacity": 1,
+    "bed": "Single Bed",
+    "services": ["Baño Privado", "WiFi", "TV"],
+    "image": room2Image,
+    "stars": 3,
+    "type": "Economy"
+  },
+  {
+    "id": 7,
+    "name": "Doble con Vistas al Mar",
+    "description": "Despiértate con el sonido de las olas. Habitación doble con cama Queen y espectaculares vistas panorámicas al océano.",
+    "price": 140,
+    "oldPrice": 170,
+    "capacity": 2,
+    "bed": "Queen Bed",
+    "services": ["Desayuno", "Baño Privado", "WiFi", "TV", "Vistas al Mar"],
+    "image": room3Image,
+    "stars": 5,
+    "type": "Premium"
+  },
+  {
+    "id": 8,
+    "name": "Suite Ático",
+    "description": "Exclusiva suite en el último piso. Cama King, sala de estar de doble altura, balcón envolvente con vistas de 360 grados y detalles de diseño únicos.",
+    "price": 280,
+    "oldPrice": 330,
+    "capacity": 2,
+    "bed": "King Bed",
+    "services": ["Desayuno Exclusivo", "Baño de Lujo", "WiFi de Alta Velocidad", "Smart TV 70\"", "Minibar", "Balcón Panorámico"],
+    "image": room3Image,
+    "stars": 5,
+    "type": "Penthouse"
+  }
+];
+
+// Función para obtener datos de la habitación
+async function getRoom(roomId) {
+  // Primero intentamos obtener los datos desde la API
+  try {
+    const response = await fetch(`http://localhost:3001/api/habitaciones/${roomId}`);
+    
+    if (response.ok) {
+      const roomData = await response.json();
+      
+      // Mapear datos de la API a la estructura interna usada
+      return {
+        id: roomData.id,
+        name: roomData.nombre || roomData.name,
+        description: roomData.descripcion || roomData.description,
+        price: roomData.precio || roomData.price,
+        oldPrice: roomData.precioAnterior || roomData.oldPrice,
+        capacity: roomData.capacidad || roomData.capacity,
+        bed: roomData.cama || roomData.bed,
+        services: roomData.servicios || roomData.services,
+        image: roomData.imagen ? roomData.imagen : 
+               roomData.id % 3 === 1 ? room1Image : 
+               roomData.id % 3 === 2 ? room2Image : room3Image,
+        stars: roomData.estrellas || roomData.stars || 4,
+        type: roomData.tipo || roomData.type || "Standard"
+      };
+    }
+  } catch (error) {
+    console.error("Error al obtener datos de la API:", error);
+  }
+  
+  // Si la API falla, buscamos en los datos locales
+  const localRoom = initialRooms.find(room => room.id === parseInt(roomId));
+  if (localRoom) {
+    return localRoom;
+  }
+  
+  // Si no encontramos la habitación, retornamos null
+  return null;
+}
+
+// Obtener datos de la habitación
+const room = await getRoom(parseInt(id));
+
+// Habitaciones relacionadas (recomendadas)
+const relatedRooms = initialRooms
+  .filter(r => r.id !== parseInt(id) && r.type === (room?.type || "")) // Habitaciones del mismo tipo
+  .slice(0, 3); // Limitamos a 3 habitaciones similares
+
+// Si no hay habitaciones del mismo tipo, mostramos otras habitaciones
+const recommendedRooms = relatedRooms.length > 0 ? 
+  relatedRooms : 
+  initialRooms
+    .filter(r => r.id !== parseInt(id))
+    .slice(0, 3);
+
+// Calcular la puntuación de reseñas (número aleatorio entre 4 y 5)
+const reviewScore = Math.round((4 + Math.random()) * 10) / 10;
+// Número aleatorio de reseñas entre 10 y 100
+const reviewCount = Math.floor(Math.random() * 90) + 10;
+
+// Características adicionales
+const additionalFeatures = [
+  { icon: "fas fa-wifi", name: "WiFi de Alta Velocidad", description: "Conexión premium en toda la habitación" },
+  { icon: "fas fa-snowflake", name: "Climatización", description: "Control individual de temperatura" },
+  { icon: "fas fa-concierge-bell", name: "Servicio de Habitaciones", description: "Disponible las 24 horas" },
+  { icon: "fas fa-shield-alt", name: "Caja Fuerte", description: "Con capacidad para portátil" },
+  { icon: "fas fa-tv", name: "Smart TV", description: "Con acceso a plataformas de streaming" },
+  { icon: "fas fa-bath", name: "Baño Completo", description: "Con amenities premium" },
+];
+
+// Reseñas de ejemplo
+const reviews = [
+  { name: "Ana López", date: "10 Abril, 2025", rating: 5, comment: "¡Increíble habitación! Las vistas son espectaculares y el servicio fue impecable." },
+  { name: "Carlos Rodríguez", date: "28 Marzo, 2025", rating: 4, comment: "Muy cómoda y bien equipada. El desayuno es excelente. Volveré seguro." },
+  { name: "María González", date: "15 Febrero, 2025", rating: 5, comment: "Nos encantó todo. La habitación es espaciosa y la atención del personal es sobresaliente." }
+];
+
+// Error handling
+if (!room) {
+  return Astro.redirect('/404');
+}
+const seo = {
+	title: `Hotel Paraíso | Habitacion ${room.id}`,
+	description: 'Disfruta de un día inolvidable o una noche de descanso en Hotel Paraíso. Ofrecemos pasadías, hospedaje y experiencias únicas frente al mar.',
+};
+
+---
+
+
+<Layout {seo}>
+  <AnnouncementBar slot="announcement-bar" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <!-- Encabezado de la habitación -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+      <div class="space-y-2">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">{room.name}</h1>
+        <div class="flex flex-wrap items-center gap-4">
+          <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-md">
+            {room.type}
+          </span>
+          <div class="flex">
+            {Array(5).fill(0).map((_, i) => (
+              <i class={`fas fa-star ${i < room.stars ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+            ))}
+          </div>
+          <div>
+            <span class="font-bold text-blue-600">{reviewScore}</span>
+            <span class="text-gray-600">({reviewCount} reseñas)</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="md:text-right">
+        <div class="mb-2">
+          <span class="text-3xl font-bold text-blue-600">${room.price}</span>
+          {room.oldPrice && (
+            <span class="text-lg line-through text-gray-400 ml-2">${room.oldPrice}</span>
+          )}
+          <span class="text-gray-500 block">/ noche</span>
+        </div>
+        <a href={`/reserva/${room.id}`} class="inline-block w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 text-center">
+          Reservar Ahora
+        </a>
+      </div>
+    </div>
+    
+    <!-- Galería de imágenes -->
+    <div class="mb-10">
+      <div class="w-full h-[300px] md:h-[400px] lg:h-[500px] rounded-2xl overflow-hidden shadow-lg mb-4">
+        <Image 
+          src={room.image} 
+          class="w-full h-full object-cover hover:scale-105 transition duration-500" 
+          alt={room.name} 
+          widths={[400, 800, 1200]} 
+          sizes="(max-width: 768px) 100vw, 800px"
+        />
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="h-24 sm:h-28 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+          <Image 
+            src={room.image} 
+            class="w-full h-full object-cover hover:scale-110 transition duration-300" 
+            alt="Detalle 1" 
+            widths={[150, 300]} 
+            sizes="150px" 
+          />
+        </div>
+        <div class="h-24 sm:h-28 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+          <Image 
+            src={room.image} 
+            class="w-full h-full object-cover hover:scale-110 transition duration-300" 
+            alt="Detalle 2" 
+            widths={[150, 300]} 
+            sizes="150px" 
+          />
+        </div>
+        <div class="h-24 sm:h-28 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+          <Image 
+            src={room.image} 
+            class="w-full h-full object-cover hover:scale-110 transition duration-300" 
+            alt="Detalle 3" 
+            widths={[150, 300]} 
+            sizes="150px" 
+          />
+        </div>
+        <div class="h-24 sm:h-28 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 relative">
+          <div class="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold">
+            +10 fotos
+          </div>
+          <Image 
+            src={room.image} 
+            class="w-full h-full object-cover" 
+            alt="Más fotos" 
+            widths={[150, 300]} 
+            sizes="150px" 
+          />
+        </div>
+      </div>
+    </div>
+    
+    <!-- Contenido principal - Grid de 2 columnas en desktop -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Columna principal con información de la habitación -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Detalles de la habitación -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
+          <div class="p-6 sm:p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Detalles de la Habitación</h2>
+            <p class="text-gray-700 mb-8">{room.description}</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-indigo-50 rounded-xl p-4 flex items-center gap-4 hover:bg-indigo-100 transition duration-300">
+                <div class="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center">
+                  <i class="fas fa-user-friends"></i>
+                </div>
+                <div>
+                  <span class="text-gray-600 text-sm">Capacidad</span>
+                  <p class="font-bold text-gray-900">{room.capacity} {room.capacity === 1 ? 'Persona' : 'Personas'}</p>
+                </div>
+              </div>
+              <div class="bg-indigo-50 rounded-xl p-4 flex items-center gap-4 hover:bg-indigo-100 transition duration-300">
+                <div class="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center">
+                  <i class="fas fa-bed"></i>
+                </div>
+                <div>
+                  <span class="text-gray-600 text-sm">Cama</span>
+                  <p class="font-bold text-gray-900">{room.bed}</p>
+                </div>
+              </div>
+              <div class="bg-indigo-50 rounded-xl p-4 flex items-center gap-4 hover:bg-indigo-100 transition duration-300">
+                <div class="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center">
+                  <i class="fas fa-ruler-combined"></i>
+                </div>
+                <div>
+                  <span class="text-gray-600 text-sm">Tamaño</span>
+                  <p class="font-bold text-gray-900">32 m²</p>
+                </div>
+              </div>
+              <div class="bg-indigo-50 rounded-xl p-4 flex items-center gap-4 hover:bg-indigo-100 transition duration-300">
+                <div class="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center">
+                  <i class="fas fa-mountain"></i>
+                </div>
+                <div>
+                  <span class="text-gray-600 text-sm">Vista</span>
+                  <p class="font-bold text-gray-900">Ciudad</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Servicios y comodidades -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
+          <div class="p-6 sm:p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Servicios y Comodidades</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+              {room.services.map((service) => (
+                <div class="bg-green-50 rounded-xl p-4 flex items-center gap-3 hover:bg-green-100 transition duration-300">
+                  <div class="text-green-600 text-lg">
+                    <i class="fas fa-check-circle"></i>
+                  </div>
+                  <span class="text-gray-800">{service}</span>
+                </div>
+              ))}
+            </div>
+            
+            <h3 class="text-xl font-bold text-gray-900 mb-6 border-l-4 border-blue-600 pl-3">Características adicionales</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {additionalFeatures.map((feature) => (
+                <div class="flex gap-4">
+                  <div class="text-blue-600 text-xl">
+                    <i class={feature.icon}></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-gray-900">{feature.name}</h4>
+                    <p class="text-gray-600 text-sm">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Opiniones de huéspedes -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
+          <div class="p-6 sm:p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Opiniones de Huéspedes</h2>
+            
+            <div class="flex flex-col md:flex-row gap-8 border-b border-gray-200 pb-8 mb-8">
+              <div class="flex items-center gap-4">
+                <span class="text-5xl font-bold text-blue-600">{reviewScore}</span>
+                <div>
+                  <div class="flex text-yellow-400">
+                    {Array(5).fill(0).map((_, i) => (
+                      <i class={`fas fa-star ${i < Math.round(reviewScore) ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+                    ))}
+                  </div>
+                  <div class="text-gray-600 text-sm">{reviewCount} reseñas</div>
+                </div>
+              </div>
+              
+              <div class="flex-1 space-y-2">
+                <div class="flex items-center gap-4">
+                  <span class="text-gray-700 w-24">Limpieza</span>
+                  <div class="flex-1 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 95%"></div>
+                  </div>
+                  <span class="font-semibold">9.5</span>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-gray-700 w-24">Confort</span>
+                  <div class="flex-1 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 90%"></div>
+                  </div>
+                  <span class="font-semibold">9.0</span>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-gray-700 w-24">Ubicación</span>
+                  <div class="flex-1 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
+                  </div>
+                  <span class="font-semibold">8.5</span>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-gray-700 w-24">Servicios</span>
+                  <div class="flex-1 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 92%"></div>
+                  </div>
+                  <span class="font-semibold">9.2</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="space-y-6">
+              {reviews.map((review) => (
+                <div class="border-b border-gray-200 pb-6">
+                  <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-3">
+                      <div class="bg-indigo-100 rounded-full w-10 h-10 flex items-center justify-center text-blue-600">
+                        <i class="fas fa-user"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-gray-900">{review.name}</h4>
+                        <span class="text-gray-500 text-sm">{review.date}</span>
+                      </div>
+                    </div>
+                    <div class="flex text-yellow-400">
+                      {Array(5).fill(0).map((_, i) => (
+                        <i class={`fas fa-star ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+                      ))}
+                    </div>
+                  </div>
+                  <p class="text-gray-700">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+            
+            <div class="text-center mt-8">
+              <a href="#" class="inline-block border border-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-50 transition duration-300">
+                Ver todas las reseñas
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Políticas de reserva -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
+          <div class="p-6 sm:p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Políticas de Reserva</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="flex gap-4">
+                <div class="text-blue-600 text-2xl">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Check-in / Check-out</h4>
+                  <p class="text-gray-600">Check-in: 15:00 - 22:00</p>
+                  <p class="text-gray-600">Check-out: hasta las 11:00</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <div class="text-blue-600 text-2xl">
+                  <i class="fas fa-ban"></i>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Política de cancelación</h4>
+                  <p class="text-gray-600">Cancelación gratuita hasta 48 horas antes de la llegada</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <div class="text-blue-600 text-2xl">
+                  <i class="fas fa-baby"></i>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Niños y camas supletorias</h4>
+                  <p class="text-gray-600">Niños de todas las edades son bienvenidos</p>
+                </div>
+              </div>
+              <div class="flex gap-4">
+                <div class="text-blue-600 text-2xl">
+                  <i class="fas fa-paw"></i>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Mascotas</h4>
+                  <p class="text-gray-600">No se admiten mascotas</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Sidebar para reserva -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-8">
+          <!-- Tarjeta de reserva -->
+          <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden mb-8">
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-gray-900 mb-4">Reserva tu estancia</h3>
+              <div class="mb-6">
+                <span class="text-3xl font-bold text-blue-600">${room.price}</span>
+                {room.oldPrice && (
+                  <span class="text-lg line-through text-gray-400 ml-2">${room.oldPrice}</span>
+                )}
+                <span class="text-gray-500 block">/ noche</span>
+              </div>
+              
+              <form class="space-y-4">
+                <div>
+                  <label for="check-in" class="block text-gray-700 mb-1">Llegada</label>
+                  <input 
+                    type="date" 
+                    id="check-in" 
+                    min={new Date().toISOString().split('T')[0]}
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label for="check-out" class="block text-gray-700 mb-1">Salida</label>
+                  <input 
+                    type="date" 
+                    id="check-out" 
+                    min={new Date().toISOString().split('T')[0]}
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label for="guests" class="block text-gray-700 mb-1">Huéspedes</label>
+                  <select 
+                    id="guests"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {Array(room.capacity).fill(0).map((_, i) => (
+                      <option value={i + 1}>{i + 1} {i === 0 ? 'Huésped' : 'Huéspedes'}</option>
+                    ))}
+                  </select>
+                </div>
+                <div class="flex">
+                  <input 
+                    type="text" 
+                    placeholder="Código promocional"
+                    class="flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button 
+                    type="button"
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-r-lg transition duration-300"
+                  >
+                    Aplicar
+                  </button>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-4 mt-4">
+                  <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">${room.price} x 1 noche</span>
+                    <span class="font-semibold">${room.price}</span>
+                  </div>
+                  <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">Impuestos y tasas</span>
+                    <span class="font-semibold">${Math.round(room.price * 0.10)}</span>
+                  </div>
+                  {room.oldPrice && (
+                    <div class="flex justify-between mb-2 text-green-600">
+                      <span>Descuento especial</span>
+                      <span>-${Math.round(room.oldPrice - room.price)}</span>
+                    </div>
+                  )}
+                  <div class="flex justify-between border-t border-gray-200 pt-3 mt-3">
+                    <span class="font-bold text-lg">Total</span>
+                    <span class="font-bold text-lg">${Math.round(room.price * 1.10)}</span>
+                  </div>
+                </div>
+                
+                <button 
+                  type="button" 
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300"
+                >
+                  Reservar Ahora
+                </button>
+              </form>
+              
+              <div class="mt-6 space-y-3">
+                <div class="flex items-center gap-3 text-gray-700">
+                  <i class="fas fa-calendar-check text-blue-600"></i>
+                  <span>Confirmación inmediata</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-700">
+                  <i class="fas fa-shield-alt text-blue-600"></i>
+                  <span>Pago seguro</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-700">
+                  <i class="fas fa-percentage text-blue-600"></i>
+                  <span>Mejor precio garantizado</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Tarjeta de ayuda -->
+          <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">¿Necesitas ayuda?</h3>
+              <p class="text-gray-600 mb-4">Nuestro equipo está disponible 24/7 para asistirte</p>
+              <div class="space-y-3">
+                <a href="tel:+34900123456" class="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition duration-300">
+                  <i class="fas fa-phone-alt"></i>
+                  <span>+34 900 123 456</span>
+                </a>
+                <a href="mailto:reservas@tuhotel.com" class="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition duration-300">
+                  <i class="fas fa-envelope"></i>
+                  <span>reservas@tuhotel.com</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition duration-300">
+                  <i class="fas fa-comment-dots"></i>
+                  <span>Chat en vivo</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Habitaciones similares -->
+    <div class="mt-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-8">Habitaciones Similares</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {recommendedRooms.map((recRoom) => (
+          <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden h-full">
+            <div class="h-48 overflow-hidden">
+              <Image 
+                src={recRoom.image} 
+                class="w-full h-full object-cover hover:scale-110 transition duration-500" 
+                alt={recRoom.name} 
+                widths={[300, 500]} 
+                sizes="(max-width: 768px) 100vw, 300px" 
+              />
+            </div>
+            <div class="p-6">
+              <h5 class="text-lg font-bold text-gray-900 mb-2">{recRoom.name}</h5>
+              <div class="flex justify-between items-center mb-4">
+                <div class="flex text-yellow-400">
+                  {Array(5).fill(0).map((_, i) => (
+                    <i class={`fas fa-star ${i < recRoom.stars ? 'text-yellow-400' : 'text-gray-300'}`}></i>
+                  ))}
+                </div>
+                <div>
+                  <span class="font-bold text-blue-600">${recRoom.price}</span>
+                  <span class="text-gray-500">/ noche</span>
+                </div>
+              </div>
+              <p class="text-gray-600 mb-4">{recRoom.description.substring(0, 80)}...</p>
+              <a href={`/booking/${recRoom.id}`} class="inline-block w-full text-center border border-blue-600 text-blue-600 font-semibold py-2 px-4 rounded-lg hover:bg-blue-50 transition duration-300">
+                Ver Detalles
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

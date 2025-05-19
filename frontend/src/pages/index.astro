@@ -1,4 +1,5 @@
 ---
+import "../styles/global.css"
 import { Icon } from 'astro-icon/components';
 import {
 	Button,
@@ -20,6 +21,8 @@ const seo = {
 
 <Layout {seo}>
 	<TextAndImageHero reversed>
+
+		
 		<div slot="text-container">
 			<h1>Bienvenido a Hotel Paraíso</h1>
 			<p>Pasadías, habitaciones y experiencias inolvidables frente al mar.</p>
@@ -48,31 +51,23 @@ const seo = {
 
 	<ThreeColumnTextSection>
 		<div slot="column-1-body">
-			<h2>Pasadías</h2>
-			<p>
-				Acceso a piscina, zonas verdes, restaurante y zonas de descanso.
-				Perfecto para relajarte y disfrutar del día sin preocuparte por nada.
-			</p>
-		</div>
-		<Button slot="column-1-cta" href="/pasadias">Ver Más</Button>
-
-		<div slot="column-2-body">
 			<h2>Habitaciones</h2>
 			<p>
 				Cómodas habitaciones privadas con aire acondicionado, baño privado y
 				todo lo necesario para tu descanso. Ideal para parejas o familias.
 			</p>
 		</div>
-		<Button slot="column-2-cta" outlined href="/habitaciones">Explorar</Button>
+		<Button slot="column-1-cta" outlined href="/habitaciones">Explorar Habitaciones</Button>
 
-		<div slot="column-3-body">
-			<h2>Eventos</h2>
+		<div slot="column-2-body">
+			<h2>Menu del Restaurante</h2>
 			<p>
-				Organiza cumpleaños, reuniones familiares o actividades corporativas
-				en un ambiente natural, amplio y acogedor.
+				Comida rica y saludable para todos los gustos desde vegetarianos hasta 
+				amantes del picante a buen precio.
 			</p>
 		</div>
-		<Button slot="column-3-cta" href="/eventos">Solicitar Cotización</Button>
+		<Button slot="column-2-cta" outlined href="/menu-restaurante">Explorar Menu</Button>
+
 	</ThreeColumnTextSection>
 
 	<YouTubeEmbedSection

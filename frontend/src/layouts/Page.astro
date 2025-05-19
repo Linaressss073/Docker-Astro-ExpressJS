@@ -23,15 +23,6 @@ const { seo } = Astro.props as Props;
         <slot />
     </div>
 
-   <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-		<df-messenger
-		intent="WELCOME"
-		chat-title="ChatBot"
-		agent-id="8c4bff09-88ec-459d-ac06-5f4d6c8ce09a"
-		language-code="es"
-		>
-	</df-messenger>
-
     <Footer
         slot="footer"
         background="var(--theme-surface-1)"
@@ -43,7 +34,6 @@ const { seo } = Astro.props as Props;
         <Logo slot="logo" />
     </Footer>
 
-    
 
 </Layout>
 

@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import tailwindcss from "@tailwindcss/vite";
 import astroIcon from 'astro-icon';
 
 export default defineConfig({
@@ -8,6 +9,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 4321
   },
+  output:'server',
    proxy: {
       // Configuración para redirigir solicitudes API al backend
       '/api': {
@@ -15,6 +17,9 @@ export default defineConfig({
         changeOrigin: true,
         secure: false
       }
+  },
+  vite:  {
+    plugins:[tailwindcss()]
   }
 });
 

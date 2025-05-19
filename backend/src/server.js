@@ -9,9 +9,10 @@ const cors = require('cors');
 const colors = require('./colors/theme.js');
 //Importando funciones
 const { probarConexion } = require('./config/database.js');
-const { syncModels } = require('./models');
+const { syncModels, seedHabitaciones } = require('./models');
 // Importar rutas
 const rutas = require('./routes/index');
+const habitacionesRoutes = require('./routes/habitacionesRouter.js')
 
 const app = express();
 
@@ -65,6 +66,9 @@ app.use((err, req, res, next) => {
 // Montar las rutas
 app.use('/api', rutas);
 
+// Ruta base para habitaciones
+app.use('/api/habitaciones', habitacionesRoutes );
+
 const PORT = process.env.PORT || 3000;
 
 //Iniciar servidor
@@ -74,6 +78,7 @@ const iniciarServidor = async () => {
         const dbConectada = await probarConexion();
         if (dbConectada){
             await syncModels();
+            await seedHabitaciones();
             app.listen(PORT , () =>{
                 console.log(`✅ Servidor corriendo en el puerto ${PORT}`.success);
 

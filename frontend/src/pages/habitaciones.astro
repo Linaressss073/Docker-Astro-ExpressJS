@@ -123,9 +123,14 @@ const roomTypes = [...new Set(rooms.map(room => room.type))];
 const capacities = [...new Set(rooms.map(room => room.capacity))].sort((a, b) => a - b);
 const minPrice = Math.min(...rooms.map(room => room.price));
 const maxPrice = Math.max(...rooms.map(room => room.price));
+
+const seo = {
+	title: 'Hotel Paraíso | Alquiler de Habitaciones',
+	description: 'Disfruta de un día inolvidable o una noche de descanso en Hotel Paraíso. Ofrecemos pasadías, hospedaje y experiencias únicas frente al mar.',
+};
 ---
 
-<Layout>
+<Layout {seo}>
   <AnnouncementBar slot="announcement-bar" />
 
   <div class="rooms-hero">
@@ -303,9 +308,10 @@ const maxPrice = Math.max(...rooms.map(room => room.price));
                   </div>
                   
                   <div class="card-buttons">
-                    <a href={`/room/${room.id}`} class="btn btn-outline">Ver Detalles</a>
+                    <a href={`/habitaciones/${room.id}`} class="btn btn-outline">Ver Detalles</a>
                     <a href={`/booking/${room.id}`} class="btn btn-primary">Reservar Ahora</a>
                   </div>
+
                 </div>
               </div>
             </div>
