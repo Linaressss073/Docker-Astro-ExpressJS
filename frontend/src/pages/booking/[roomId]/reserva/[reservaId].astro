@@ -1,0 +1,24 @@
+---
+const { reservaId } = Astro.params;
+
+const response = await fetch(`http://localhost:3001/api/reservas/${reservaId}`);
+const reserva = await response.json();
+---
+
+<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+  {reserva.message ? (
+    <p class="text-red-600 text-center">{reserva.message}</p>
+  ) : (
+    <>
+      <h1 class="text-2xl font-bold mb-4 text-center">Detalle de Reserva #{reserva.id}</h1>
+      <ul class="space-y-2 text-gray-700">
+        <li><strong>Usuario:</strong> {reserva.usuarioId}</li>
+        <li><strong>Habitación:</strong> {reserva.habitacionId}</li>
+        <li><strong>Fecha Entrada:</strong> {new Date(reserva.fechaEntrada).toLocaleDateString()}</li>
+        <li><strong>Fecha Salida:</strong> {new Date(reserva.fechaSalida).toLocaleDateString()}</li>
+        <li><strong>Cantidad Personas:</strong> {reserva.cantidadPersonas}</li>
+        <li><strong>Total:</strong> ${reserva.total}</li>
+      </ul>
+    </>
+  )}
+</div>

@@ -1,0 +1,149 @@
+---
+const { roomId } = Astro.params;
+const today = new Date().toISOString().split('T')[0];
+const roomIdJson = JSON.stringify(roomId);
+---
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+  <h1 class="text-2xl font-bold mb-6 text-center">Reservar habitacion #{roomId}</h1>
+  <form id="reservaForm" class="space-y-4">
+    <div>
+      <label for="usuarioId" class="block mb-1 font-semibold">Usuario ID:</label>
+      <input
+        id="usuarioId"
+        name="usuarioId"
+        type="text"
+        required
+        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+    <div>
+      <label for="fechaEntrada" class="block mb-1 font-semibold">Fecha Entrada:</label>
+      <input
+        id="fechaEntrada"
+        name="fechaEntrada"
+        type="date"
+        required
+        min={today}
+        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+    <div>
+      <label for="fechaSalida" class="block mb-1 font-semibold">Fecha Salida:</label>
+      <input
+        id="fechaSalida"
+        name="fechaSalida"
+        type="date"
+        required
+        min={today}
+        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+    <div>
+      <label for="cantidadPersonas" class="block mb-1 font-semibold">Cantidad Personas:</label>
+      <input
+        id="cantidadPersonas"
+        name="cantidadPersonas"
+        type="number"
+        min="1"
+        required
+        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+    <button
+      type="submit"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition duration-300"
+    >
+      Reservar Ahora
+    </button>
+  </form>
+  <p id="message" class="mt-4 text-center text-red-600"></p>
+</div>
+
+<script is:inline define:vars={{ roomId }}>
+  // No necesitamos roomIdJson aquí, usamos define:vars para pasar la variable directamente
+  window.roomId = roomId;
+</script>
+
+<script>
+  const form = document.getElementById('reservaForm');
+  const message = document.getElementById('message');
+  const fechaEntradaInput = form.fechaEntrada;
+  const fechaSalidaInput = form.fechaSalida;
+  
+  // Obtener roomId de la ventana global (definido en el script anterior)
+  const roomId = window.roomId;
+  console.log('Room ID utilizado:', roomId);
+  
+  fechaEntradaInput.addEventListener('change', () => {
+    fechaSalidaInput.min = fechaEntradaInput.value;
+    if (fechaSalidaInput.value < fechaEntradaInput.value) {
+      fechaSalidaInput.value = fechaEntradaInput.value;
+    }
+  });
+  
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    message.textContent = 'Enviando solicitud...';
+    message.style.color = 'blue';
+    
+    const formData = new FormData(form);
+    const data = {
+      usuarioId: formData.get('usuarioId'),
+      fechaEntrada: formData.get('fechaEntrada'),
+      fechaSalida: formData.get('fechaSalida'),
+      cantidadPersonas: Number(formData.get('cantidadPersonas')),
+    };
+    
+    console.log('Datos a enviar:', data);
+    
+    try {
+      // Usamos la URL correcta que coincide con la configuración de tu router
+      const apiUrl = `http://localhost:3001/api/habitaciones/${encodeURIComponent(roomId)}/generarReserva`;
+      console.log('URL de la API:', apiUrl);
+      
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data),
+      });
+      
+      console.log('Estado de la respuesta:', res.status);
+      
+      // Intentar obtener el texto de la respuesta primero
+      const responseText = await res.text();
+      console.log('Respuesta del servidor (texto):', responseText);
+      
+      // Luego intentar parsearlo como JSON si es posible
+      let result;
+      try {
+        result = responseText ? JSON.parse(responseText) : {};
+        console.log('Respuesta parseada:', result);
+      } catch (parseError) {
+        console.error('Error al parsear la respuesta JSON:', parseError);
+        message.textContent = 'Error: La respuesta del servidor no es un JSON válido';
+        message.style.color = 'red';
+        return;
+      }
+      
+      if (res.ok) {
+        message.textContent = 'Reserva creada exitosamente! Redirigiendo...';
+        message.style.color = 'green';
+        // Añadir un pequeño retraso para mostrar el mensaje de éxito
+        setTimeout(() => {
+          window.location.href = `/booking/reserva/${result.reserva.id}`;
+        }, 1000);
+      } else {
+        message.textContent = result.message || `Error: ${res.status} - ${res.statusText}`;
+        message.style.color = 'red';
+      }
+    } catch (err) {
+      console.error('Error de conexión:', err);
+      message.textContent = `Error al conectar con el servidor: ${err.message}`;
+      message.style.color = 'red';
+    }
+  });
+</script>

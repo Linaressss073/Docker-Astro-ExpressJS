@@ -5,6 +5,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const cors = require('cors');
+const app = express();
+
+
 // Colors para estilizar
 const colors = require('./colors/theme.js');
 //Importando funciones
@@ -12,9 +15,16 @@ const { probarConexion } = require('./config/database.js');
 const { syncModels, seedHabitaciones } = require('./models');
 // Importar rutas
 const rutas = require('./routes/index');
-const habitacionesRoutes = require('./routes/habitacionesRouter.js')
 
-const app = express();
+const reservasRoutes = require('./routes/reservasRouter.js')
+const habitacionesRoutes = require('./routes/habitacionesRouter.js');
+const router = require('./routes/reservasRouter.js');
+
+// Configurar CORS
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:4321', // Puerto por defecto de Astro
+  credentials: true
+}));
 
 //Middleware
 app.use(express.json());
@@ -24,12 +34,6 @@ app.use(express.urlencoded({extended: true}));
 app.get('/', (req,res) => {
     res.send('API Express funcionando')
 });
-
-// Configurar CORS
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:4321', // Puerto por defecto de Astro
-  credentials: true
-}));
 
 // Configurar rutas
 app.use('/api/auth', require('./routes/auth.js'));
@@ -69,7 +73,11 @@ app.use('/api', rutas);
 // Ruta base para habitaciones
 app.use('/api/habitaciones', habitacionesRoutes );
 
-const PORT = process.env.PORT || 3000;
+
+app.use('/api', reservasRoutes);
+
+
+const PORT = process.env.PORT || 3001;
 
 //Iniciar servidor
 const iniciarServidor = async () => {
