@@ -1,0 +1,72 @@
+---
+const { usuarioId, habitacionId } = Astro.params;
+
+const backendUrl = 'http://localhost:3001';
+
+async function fetchCheckoutData(usuarioId, habitacionId) {
+  const res = await fetch(`${backendUrl}/api/reservas/checkout?usuarioId=${usuarioId}&habitacionId=${habitacionId}`);
+  if (!res.ok) throw new Error(`Error al obtener datos de checkout`);
+  return await res.json();
+}
+
+let datos;
+
+try {
+  datos = await fetchCheckoutData(usuarioId, habitacionId);
+} catch (error) {
+  datos = null;
+}
+---
+
+<html lang="es">
+  <head>
+    <title>Checkout - Usuario #{usuarioId} | Habitación #{habitacionId}</title>
+  </head>
+  <body>
+    {datos ? (
+      <>
+        <h1>Reservar habitación</h1>
+
+        <h2>Habitación</h2>
+        <p>ID: {datos.habitacion.id}</p>
+        <p>Nombre: {datos.habitacion.nombre}</p>
+        <p>Precio: ${datos.habitacion.precio}</p>
+
+        <h2>Huésped</h2>
+        <p>ID: {datos.usuario.id}</p>
+        <p>Nombre: {datos.usuario.nombre}</p>
+        <p>Email: {datos.usuario.email}</p>
+
+        <h2>Formulario de reserva</h2>
+        <form method="POST" action={`${backendUrl}/api/reservas`}>
+          <input type="hidden" name="usuarioId" value={usuarioId} />
+          <input type="hidden" name="habitacionId" value={habitacionId} />
+
+          <label>
+            Fecha de inicio:
+            <input type="date" name="fechaInicio" required />
+          </label>
+          <br />
+          <label>
+            Fecha de fin:
+            <input type="date" name="fechaFin" required />
+          </label>
+          <br />
+          <label>
+            Número de personas:
+            <input type="number" name="numeroPersonas" min="1" required />
+          </label>
+          <br />
+          <label>
+            Observaciones:
+            <textarea name="observaciones"></textarea>
+          </label>
+          <br />
+          <button type="submit">Confirmar reserva</button>
+        </form>
+      </>
+    ) : (
+      <p>No se pudo cargar información de usuario/habitación.</p>
+    )}
+  </body>
+</html>
