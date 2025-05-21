@@ -332,7 +332,6 @@ const initialRooms = [
   }
 ];
 
-
 const seedHabitaciones = async () => {
   try {
     const count = await Habitaciones.count();
