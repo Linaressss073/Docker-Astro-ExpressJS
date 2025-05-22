@@ -1,0 +1,504 @@
+---
+// src/pages/booking/[roomId]/reserva/[id].astro
+export async function getStaticPaths() {
+  // Esto es necesario para páginas dinámicas en Astro
+  return [];
+}
+
+const { roomId, id } = Astro.params;
+
+// Validar que ambos parámetros existen
+if (!roomId || !id) {
+  return Astro.redirect('/404');
+}
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva #{id} - Habitación #{roomId}</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-bold text-gray-900">
+                    <i class="fas fa-calendar-check text-blue-600 mr-2"></i>
+                    Reserva #{id}
+                </h1>
+                <div class="flex gap-2">
+                    <a href={`/booking/${roomId}/reserva/reserva`} class="text-blue-600 hover:text-blue-800 transition-colors">
+                        <i class="fas fa-plus mr-1"></i>
+                        Nueva Reserva
+                    </a>
+                    <button onclick="window.history.back()" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-arrow-left mr-1"></i>
+                        Volver
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div id="loading" class="flex items-center justify-center min-h-96">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Cargando información de la reserva...</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden max-w-4xl mx-auto px-4 py-8">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-4"></i>
+            <h2 class="text-xl font-semibold text-red-800 mb-2">Error al cargar la reserva</h2>
+            <p id="error-message" class="text-red-600 mb-4"></p>
+            <div class="flex gap-2 justify-center">
+                <button onclick="loadReservationData()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-redo mr-1"></i>
+                    Reintentar
+                </button>
+                <a href={`/booking/${roomId}/reserva/reserva`} class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-plus mr-1"></i>
+                    Nueva Reserva
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="content" class="hidden max-w-4xl mx-auto px-4 py-8">
+        <!-- Breadcrumb -->
+        <nav class="mb-6">
+            <ol class="flex items-center space-x-2 text-sm text-gray-500">
+                <li><a href="/habitaciones" class="hover:text-gray-700">Habitaciones</a></li>
+                <li><i class="fas fa-chevron-right text-xs"></i></li>
+                <li><span>Habitación #{roomId}</span></li>
+                <li><i class="fas fa-chevron-right text-xs"></i></li>
+                <li class="text-gray-900 font-medium">Reserva #{id}</li>
+            </ol>
+        </nav>
+
+        <!-- Reservation Status Banner -->
+        <div id="status-banner" class="mb-6 p-4 rounded-lg border-l-4">
+            <div class="flex items-center">
+                <i id="status-icon" class="text-2xl mr-3"></i>
+                <div>
+                    <h3 id="status-title" class="font-semibold text-lg"></h3>
+                    <p id="status-description" class="text-sm opacity-90"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservation Details Grid -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- Customer Information -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-user text-blue-600 mr-2"></i>
+                    Información del Cliente
+                </h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">ID Usuario:</span>
+                        <span id="usuario-id" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Nombre:</span>
+                        <span id="usuario-nombre" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Email:</span>
+                        <span id="usuario-email" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-600">Teléfono:</span>
+                        <span id="usuario-telefono" class="font-medium">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Information -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-bed text-blue-600 mr-2"></i>
+                    Información de la Habitación
+                </h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">ID Habitación:</span>
+                        <span id="habitacion-id" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Número:</span>
+                        <span id="habitacion-numero" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Tipo:</span>
+                        <span id="habitacion-tipo" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Precio por noche:</span>
+                        <span id="habitacion-precio" class="font-medium text-green-600">-</span>
+                    </div>
+                    <div class="py-2">
+                        <span class="text-gray-600 block mb-1">Descripción:</span>
+                        <span id="habitacion-descripcion" class="text-sm text-gray-800">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservation Details -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-calendar-alt text-blue-600 mr-2"></i>
+                Detalles de la Reserva
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">ID Reserva:</span>
+                        <span id="reserva-id" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Fecha de Entrada:</span>
+                        <span id="fecha-entrada" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Fecha de Salida:</span>
+                        <span id="fecha-salida" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-600">Noches:</span>
+                        <span id="noches" class="font-medium">-</span>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Cantidad de Personas:</span>
+                        <span id="cantidad-personas" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Fecha de Reserva:</span>
+                        <span id="fecha-creacion" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Estado:</span>
+                        <span id="estado-reserva" class="font-medium">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 mb-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-800">
+                <i class="fas fa-calculator text-blue-600 mr-2"></i>
+                Resumen de Pago
+            </h2>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between py-1">
+                    <span class="text-gray-700">Precio por noche:</span>
+                    <span id="precio-noche-resumen" class="text-gray-700">-</span>
+                </div>
+                <div class="flex justify-between py-1">
+                    <span class="text-gray-700">Número de noches:</span>
+                    <span id="num-noches-resumen" class="text-gray-700">-</span>
+                </div>
+                <hr class="border-gray-300">
+                <div class="flex justify-between py-2 text-xl font-bold text-blue-800">
+                    <span>Total:</span>
+                    <span id="total-pago" class="text-2xl">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button onclick="window.print()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-colors text-center">
+                <i class="fas fa-print block mb-1 text-lg"></i>
+                <span class="text-sm">Imprimir</span>
+            </button>
+            <button onclick="exportToPDF()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-colors text-center">
+                <i class="fas fa-file-pdf block mb-1 text-lg"></i>
+                <span class="text-sm">Exportar PDF</span>
+            </button>
+            <button onclick="shareReservation()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition-colors text-center">
+                <i class="fas fa-share block mb-1 text-lg"></i>
+                <span class="text-sm">Compartir</span>
+            </button>
+            <a href={`/booking/${roomId}/reserva/reserva`} class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors text-center">
+                <i class="fas fa-plus block mb-1 text-lg"></i>
+                <span class="text-sm">Nueva Reserva</span>
+            </a>
+        </div>
+    </main>
+
+    <script is:inline define:vars={{ roomId, id }}>
+        // Elementos del DOM
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error');
+        const contentEl = document.getElementById('content');
+        const errorMessageEl = document.getElementById('error-message');
+
+        // Configuración del API
+        const API_BASE_URL = 'http://localhost:3001/api';
+
+        // Función para formatear fechas
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Función para formatear fechas cortas
+        function formatShortDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES');
+        }
+
+        // Función para formatear precios
+        function formatPrice(price) {
+            if (!price || isNaN(price)) return 'N/A';
+            return new Intl.NumberFormat('es-ES', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(price);
+        }
+
+        // Función para calcular días entre fechas
+        function calculateDays(startDate, endDate) {
+            if (!startDate || !endDate) return 0;
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end - start);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // Función para determinar el estado de la reserva
+        function getReservationStatus(fechaEntrada, fechaSalida) {
+            const now = new Date();
+            const entrada = new Date(fechaEntrada);
+            const salida = new Date(fechaSalida);
+
+            if (now < entrada) {
+                return {
+                    status: 'pending',
+                    title: 'Reserva Confirmada',
+                    description: 'Su reserva está confirmada y pendiente de check-in',
+                    color: 'bg-blue-50 border-blue-500',
+                    icon: 'fas fa-clock text-blue-600'
+                };
+            } else if (now >= entrada && now <= salida) {
+                return {
+                    status: 'active',
+                    title: 'Estancia Activa',
+                    description: 'Actualmente se encuentra hospedado',
+                    color: 'bg-green-50 border-green-500',
+                    icon: 'fas fa-check-circle text-green-600'
+                };
+            } else {
+                return {
+                    status: 'completed',
+                    title: 'Estancia Completada',
+                    description: 'Su estancia ha finalizado',
+                    color: 'bg-gray-50 border-gray-400',
+                    icon: 'fas fa-flag-checkered text-gray-600'
+                };
+            }
+        }
+
+        // Función para llenar los datos en la página
+        function populateReservationData(data) {
+            console.log('Datos recibidos:', data);
+            
+            const reserva = data.reserva || data;
+            const usuario = reserva.usuario || {};
+            const habitacion = reserva.habitacion || {};
+
+            // Verificar que la reserva pertenece a la habitación correcta
+            if (reserva.habitacionId && reserva.habitacionId.toString() !== roomId.toString()) {
+                console.warn(`La reserva ${id} no pertenece a la habitación ${roomId}`);
+                // Podrías mostrar una advertencia o redireccionar
+            }
+
+            // Información del usuario
+            document.getElementById('usuario-id').textContent = reserva.usuarioId || 'N/A';
+            document.getElementById('usuario-nombre').textContent = usuario.nombre || usuario.name || 'N/A';
+            document.getElementById('usuario-email').textContent = usuario.email || 'N/A';
+            document.getElementById('usuario-telefono').textContent = usuario.telefono || usuario.phone || 'N/A';
+
+            // Información de la habitación
+            document.getElementById('habitacion-id').textContent = reserva.habitacionId || roomId;
+            document.getElementById('habitacion-numero').textContent = habitacion.numero || habitacion.number || `#${roomId}`;
+            document.getElementById('habitacion-tipo').textContent = habitacion.tipo || habitacion.type || 'N/A';
+            document.getElementById('habitacion-precio').textContent = formatPrice(habitacion.precio || habitacion.price);
+            document.getElementById('habitacion-descripcion').textContent = habitacion.descripcion || habitacion.description || 'Sin descripción disponible';
+
+            // Detalles de la reserva
+            document.getElementById('reserva-id').textContent = reserva.id || id;
+            document.getElementById('fecha-entrada').textContent = formatDate(reserva.fechaEntrada);
+            document.getElementById('fecha-salida').textContent = formatDate(reserva.fechaSalida);
+            document.getElementById('cantidad-personas').textContent = reserva.cantidadPersonas || 'N/A';
+            document.getElementById('fecha-creacion').textContent = formatShortDate(reserva.createdAt || reserva.created_at);
+
+            // Cálculos
+            const noches = calculateDays(reserva.fechaEntrada, reserva.fechaSalida);
+            document.getElementById('noches').textContent = noches || 'N/A';
+            document.getElementById('num-noches-resumen').textContent = noches || 'N/A';
+
+            // Precios en el resumen
+            const precioNoche = habitacion.precio || habitacion.price || (reserva.total / noches);
+            document.getElementById('precio-noche-resumen').textContent = formatPrice(precioNoche);
+            document.getElementById('total-pago').textContent = formatPrice(reserva.total);
+
+            // Estado de la reserva
+            if (reserva.fechaEntrada && reserva.fechaSalida) {
+                const status = getReservationStatus(reserva.fechaEntrada, reserva.fechaSalida);
+                document.getElementById('estado-reserva').textContent = status.title;
+                
+                const statusBanner = document.getElementById('status-banner');
+                statusBanner.className = `mb-6 p-4 rounded-lg border-l-4 ${status.color}`;
+                document.getElementById('status-icon').className = status.icon;
+                document.getElementById('status-title').textContent = status.title;
+                document.getElementById('status-description').textContent = status.description;
+            }
+
+            // Actualizar título de la página
+            document.title = `Reserva #${reserva.id} - Habitación #${roomId}`;
+        }
+
+        // Función para cargar los datos de la reserva
+        async function loadReservationData() {
+            try {
+                loadingEl.classList.remove('hidden');
+                errorEl.classList.add('hidden');
+                contentEl.classList.add('hidden');
+
+                console.log('Cargando reserva - Room ID:', roomId, 'Reserva ID:', id);
+                
+                // Puedes usar cualquiera de estas dos opciones dependiendo de tu backend:
+                
+                // Opción 1: Usando la ruta específica de habitación y reserva
+                let response = await fetch(`${API_BASE_URL}/booking/${roomId}/reserva/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Si no funciona la primera opción, usar la ruta general
+                if (!response.ok) {
+                    console.log('Intentando con ruta alternativa...');
+                    response = await fetch(`${API_BASE_URL}/reservas/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+
+                console.log('Respuesta del servidor:', response.status, response.statusText);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Datos JSON:', data);
+
+                if (data.success !== false) {
+                    populateReservationData(data);
+                    
+                    // Mostrar contenido y ocultar loading
+                    loadingEl.classList.add('hidden');
+                    contentEl.classList.remove('hidden');
+                } else {
+                    throw new Error(data.message || 'Error al cargar la reserva');
+                }
+            } catch (error) {
+                console.error('Error al cargar reserva:', error);
+                
+                // Mostrar error y ocultar loading
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                errorMessageEl.textContent = error.message;
+            }
+        }
+
+        // Funciones adicionales
+        function exportToPDF() {
+            alert('Función de exportar PDF en desarrollo');
+            // Aquí puedes integrar una librería como jsPDF
+        }
+
+        function shareReservation() {
+            if (navigator.share) {
+                navigator.share({
+                    title: `Reserva #${id} - Habitación #${roomId}`,
+                    text: 'Detalles de mi reserva de hotel',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copiar URL al portapapeles
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('URL copiada al portapapeles');
+                }).catch(() => {
+                    // Fallback del fallback
+                    prompt('Copia esta URL:', window.location.href);
+                });
+            }
+        }
+
+        // Cargar datos al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!roomId || !id || roomId === 'reserva' || id === 'reserva') {
+                errorEl.classList.remove('hidden');
+                loadingEl.classList.add('hidden');
+                errorMessageEl.textContent = 'Parámetros de URL no válidos (roomId o reserva ID faltantes)';
+                return;
+            }
+            
+            loadReservationData();
+        });
+
+        // Exponer función globalmente para el botón de reintentar
+        window.loadReservationData = loadReservationData;
+
+        // Estilos para impresión
+        const printStyles = `
+            @media print {
+                body { -webkit-print-color-adjust: exact; }
+                .no-print { display: none !important; }
+                .bg-gradient-to-r { background: #f8fafc !important; }
+                header button, header a { display: none; }
+                .grid.grid-cols-2.md\\:grid-cols-4 { display: none; }
+                nav { display: none; }
+            }
+        `;
+        const style = document.createElement('style');
+        style.textContent = printStyles;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

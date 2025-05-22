@@ -79,7 +79,7 @@ app.get('/api/status', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/habitaciones', habitacionesRoutes);
-app.use('/api/reservas', reservasRoutes);
+app.use('/api', reservasRoutes);
 app.use('/api', rutasGenerales);
 
 // Rutas de compatibilidad con frontend

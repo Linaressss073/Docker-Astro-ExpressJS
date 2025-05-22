@@ -55,18 +55,71 @@ router.post('/habitaciones/:id/generarReserva', async (req, res) => {
   const { usuarioId, fechaEntrada, fechaSalida, cantidadPersonas } = req.body;
 
   try {
+    // Validar que el usuario existe
+    const usuario = await Usuario.findByPk(usuarioId);
+    if (!usuario) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    // Validar que la habitación existe
     const habitacion = await Habitaciones.findByPk(habitacionId);
     if (!habitacion) {
-      return res.status(404).json({success:false, message: 'Habitación no encontrada' });
+      return res.status(404).json({ success: false, message: 'Habitación no encontrada' });
     }
 
-    const dias = (new Date(fechaSalida) - new Date(fechaEntrada)) / (1000 * 60 * 60 * 24);
-    if (dias <= 0) {
-      return res.status(400).json({ message: 'Fechas inválidas' });
+    // Validar fechas
+    const entrada = new Date(fechaEntrada);
+    const salida = new Date(fechaSalida);
+    const ahora = new Date();
+    
+    if (entrada < ahora) {
+      return res.status(400).json({ success: false, message: 'La fecha de entrada no puede ser anterior a hoy' });
+    }
+    
+    if (salida <= entrada) {
+      return res.status(400).json({ success: false, message: 'La fecha de salida debe ser posterior a la fecha de entrada' });
     }
 
-    const total = dias * parseFloat(habitacion.precio);
+    // Calcular días y total
+    const dias = Math.ceil((salida - entrada) / (1000 * 60 * 60 * 24));
+    const precio = parseFloat(habitacion.precio);
+    
+    if (isNaN(precio)) {
+      return res.status(500).json({ success: false, message: 'Precio de habitación no válido' });
+    }
 
+    const total = dias * precio;
+
+    // Verificar disponibilidad (opcional: agregar esta validación)
+    const reservasExistentes = await Reserva.findAll({
+      where: {
+        habitacionId,
+        [require('sequelize').Op.or]: [
+          {
+            fechaEntrada: {
+              [require('sequelize').Op.between]: [fechaEntrada, fechaSalida]
+            }
+          },
+          {
+            fechaSalida: {
+              [require('sequelize').Op.between]: [fechaEntrada, fechaSalida]
+            }
+          },
+          {
+            [require('sequelize').Op.and]: [
+              { fechaEntrada: { [require('sequelize').Op.lte]: fechaEntrada } },
+              { fechaSalida: { [require('sequelize').Op.gte]: fechaSalida } }
+            ]
+          }
+        ]
+      }
+    });
+
+    if (reservasExistentes.length > 0) {
+      return res.status(400).json({ success: false, message: 'La habitación no está disponible en las fechas seleccionadas' });
+    }
+
+    // Crear la reserva
     const reserva = await Reserva.create({
       usuarioId,
       habitacionId,
@@ -76,23 +129,39 @@ router.post('/habitaciones/:id/generarReserva', async (req, res) => {
       total
     });
 
-    return res.status(201).json({ message: 'Reserva creada', reserva });
+    return res.status(201).json({ 
+      success: true, 
+      message: 'Reserva creada exitosamente', 
+      reserva: {
+        id: reserva.id,
+        usuarioId: reserva.usuarioId,
+        habitacionId: reserva.habitacionId,
+        fechaEntrada: reserva.fechaEntrada,
+        fechaSalida: reserva.fechaSalida,
+        cantidadPersonas: reserva.cantidadPersonas,
+        total: reserva.total
+      }
+    });
   } catch (error) {
     console.error('Error al generar reserva:', error);
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    return res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor',
+      error: error.message,
+    });
   }
 });
 
-// Obtener detalle de reserva por id (GET /api/reservas/:id)
+// GET /api/reservas/:reservaId - Obtener detalle de reserva por ID
 /**
  * @swagger
- * /api/reservas/{id}:
+ * /api/reservas/{reservaId}:
  *   get:
- *     summary: Obtener detalle de una reserva por su ID
+ *     summary: Obtener una reserva por su ID
  *     tags: [Reservas]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: reservaId
  *         required: true
  *         schema:
  *           type: integer
@@ -103,21 +172,25 @@ router.post('/habitaciones/:id/generarReserva', async (req, res) => {
  *       404:
  *         description: Reserva no encontrada
  *       500:
- *         description: Error interno del servidor
+ *         description: Error del servidor
  */
-router.get('/reservas/:id', async (req, res) => {
+router.get('/reservas/:reservaId', async (req, res) => {
   try {
-    const reserva = await Reserva.findByPk(req.params.id, {
-        include: [
-            { model: Habitaciones, as: 'habitacion' },
-            { model: Usuario, as: 'usuario' }
-        ]
+    const reserva = await Reserva.findByPk(req.params.reservaId, {
+      include: [
+        { model: Habitaciones, as: 'habitacion' },
+        { model: Usuario, as: 'usuario' }
+      ]
     });
-    if (!reserva) return res.status(404).json({ message: 'Reserva no encontrada' });
-    res.json(reserva);
+
+    if (!reserva) {
+      return res.status(404).json({ success: false, message: 'Reserva no encontrada' });
+    }
+
+    res.json({ success: true, reserva });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    console.error('Error al obtener reserva:', error);
+    res.status(500).json({ success: false, message: 'Error del servidor', error: error.message });
   }
 });
 
@@ -161,55 +234,13 @@ router.get('/booking/:habitacionId/reserva/:reservaId', async (req, res) => {
     });
 
     if (!reserva) {
-      return res.status(404).json({ message: 'Reserva no encontrada para esa habitación.' });
+      return res.status(404).json({ success: false, message: 'Reserva no encontrada para esa habitación.' });
     }
 
-    res.json(reserva);
+    res.json({ success: true, reserva });
   } catch (error) {
     console.error('Error al buscar reserva:', error);
-    res.status(500).json({ message: 'Error del servidor.' });
-  }
-});
-
-// GET /reservas/:reservaId
-/**
- * @swagger
- * /api/reservas/{reservaId}:
- *   get:
- *     summary: Obtener una reserva por su ID
- *     tags: [Reservas]
- *     parameters:
- *       - in: path
- *         name: reservaId
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID de la reserva
- *     responses:
- *       200:
- *         description: Detalle de la reserva
- *       404:
- *         description: Reserva no encontrada
- *       500:
- *         description: Error del servidor
- */
-router.get('/reservas/:reservaId', async (req, res) => {
-  try {
-    const reserva = await Reserva.findByPk(req.params.reservaId, {
-      include: [
-        { model: Habitaciones, as: 'habitacion' },
-        { model: Usuario, as: 'usuario' }
-      ]
-    });
-
-    if (!reserva) {
-      return res.status(404).json({ message: 'Reserva no encontrada' });
-    }
-
-    res.json(reserva);
-  } catch (error) {
-    console.error('Error al obtener reserva:', error);
-    res.status(500).json({ message: 'Error del servidor' });
+    res.status(500).json({ success: false, message: 'Error del servidor.', error: error.message });
   }
 });
 
